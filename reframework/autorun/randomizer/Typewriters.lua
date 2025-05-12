@@ -1,41 +1,41 @@
 local Typewriters = {}
 Typewriters.unlocked_typewriters = {}
 
-local function get_localplayer()
-    return sdk.get_managed_singleton("app.ObjectManager"):get_field("PlayerObj")
-end
+-- local function get_localplayer()
+--     return sdk.get_managed_singleton("app.ObjectManager"):get_field("PlayerObj")
+-- end
 
-local known_typeofs = {}
-function get_component(game_object, type_name)
-    local t = known_typeofs[type_name] or sdk.typeof(type_name)
-    known_typeofs[type_name] = t
-    return game_object:call("getComponent(System.Type)", t)
-end
+-- local known_typeofs = {}
+-- function get_component(game_object, type_name)
+--     local t = known_typeofs[type_name] or sdk.typeof(type_name)
+--     known_typeofs[type_name] = t
+--     return game_object:call("getComponent(System.Type)", t)
+-- end
 
-local function teleportPlayer(pos)
-    local player = get_localplayer()
-    local controller = get_component(player, "via.physics.CharacterController")
-    controller:call("warp")
-    player:get_Transform():set_Position(pos)
-    controller:call("warp")
-end
+-- local function teleportPlayer(pos)
+--     local player = get_localplayer()
+--     local controller = get_component(player, "via.physics.CharacterController")
+--     controller:call("warp")
+--     player:get_Transform():set_Position(pos)
+--     controller:call("warp")
+-- end
 
 
-function Typewriters.AddUnlockedText(name, item_folder_path, no_save_warning)
-    if #Lookups.typewriters == 0 then -- no typewriters, no typewriters to unlock
-        return
-    end
-    local typewriterText = name
+-- function Typewriters.AddUnlockedText(name, item_folder_path, no_save_warning)
+--     if #Lookups.typewriters == 0 then -- no typewriters, no typewriters to unlock
+--         return
+--     end
+--     local typewriterText = name
 
-    if #typewriterText == 0 then
-        for t, typewriter in pairs(Lookups.typewriters) do
-            if typewriter["folder_path"] == item_folder_path then
-                typewriterText = typewriter["name"]
-                break
-            end
-        end
-    end
-end
+--     if #typewriterText == 0 then
+--         for t, typewriter in pairs(Lookups.typewriters) do
+--             if typewriter["folder_path"] == item_folder_path then
+--                 typewriterText = typewriter["name"]
+--                 break
+--             end
+--         end
+--     end
+-- end
 
 -- Allowing specifying either the readable name or the item name, so both AP options and Item interaction can unlock
 function Typewriters.Unlock(name, item_folder_path)
@@ -99,6 +99,18 @@ function Typewriters.DisplayWarpMenu()
                 local folderLoaded = typewriter["folder_path"]
                 local chapterNumber = typewriter["chapter"] -- chapters start at 4 for ch 1, because title is 3
 
+                local posv3 = ValueType.new(sdk.find_type_definition("via.vec3"))
+                posv3:call(".ctor(System.Single, System.Single, System.Single)", pos[1], pos[2], pos[3])
+                log.debug("posv3")
+                log.debug(posv3.x)
+                log.debug(posv3.y)
+                log.debug(posv3.z)
+
+
+
+
+                local playerObject = Player.GetGameObject()
+                local playerMovement = Helpers.component(playerObject, "PlayerMovement")
                 gameMaster = Scene.getGameMaster()
                 gameManager = Scene.getGameManager()
                 saveDataManager = Helpers.component(gameMaster, "SaveDataManager")
@@ -106,23 +118,25 @@ function Typewriters.DisplayWarpMenu()
                 sceneLocal = sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), sdk.find_type_definition("via.SceneManager"), "get_CurrentScene()")
                 newFolder = sceneLocal:findFolder(folderLoaded)
 
-                local currentChapter = gameManager:call("get_CurrentChapter()")
-                log.debug(currentChapter)
-                if currentChapter == 5 then
-                    local oldFolder = sceneLocal:findFolder("Chapter/Chapter3")
-                elseif currentChapter == 6 then
-                    local oldFolder = sceneLocal:findFolder("Chapter/Chapter4")
-                elseif currentChapter == 4 then
-                    local oldFolder = sceneLocal:findFolder("Chapter/Chapter1")
+                if chapterNumber == 5 then
+                    oldFolder_2 = sceneLocal:findFolder("Chapter/Chapter4")
+                    oldFolder_1 = sceneLocal:findFolder("Chapter/Chapter1")
+                elseif chapterNumber == 6 then
+                    oldFolder_2 = sceneLocal:findFolder("Chapter/Chapter3")
+                    oldFolder_1 = sceneLocal:findFolder("Chapter/Chapter1")
+                elseif chapterNumber == 4 then
+                    oldFolder_2 = sceneLocal:findFolder("Chapter/Chapter3")
+                    oldFolder_1 = sceneLocal:findFolder("Chapter/Chapter4")
                 end
 
                 
-                gameManager:call("set_CurrentChapter(app.GameManager.ChapterNo)", chapterNumber)
-                teleportPlayer(Vector3f.new(pos[1],pos[2],pos[3]))
+                -- gameManager:call("set_CurrentChapter(app.GameManager.ChapterNo)", chapterNumber)
+                playerMovement:call("recovery(via.vec3)", posv3)
+                gameManager:call("deactivateFolder(via.Folder, System.Boolean)", oldFolder_2, false)
+                gameManager:call("deactivateFolder(via.Folder, System.Boolean)", oldFolder_1, false)
                 saveDataManager:call("folderLoadRequest(via.Folder, System.Boolean)", newFolder, false)
-                gameManager:call("deactivateFolder(via.Folder, System.Boolean)", oldFolder, false)
-                
-                local currentChapter = gameManager:call("get_CurrentChapter()")
+
+                currentChapter = gameManager:call("get_CurrentChapter()")
                 log.debug(currentChapter)
 
             end
@@ -176,13 +190,20 @@ function Typewriters.DisplayWarpMenu()
     --     gameManager:call("deactivateFolder(via.Folder, System.Boolean)", test, false)
     --     saveDataManager:call("folderLoadRequest(via.Folder, System.Boolean)", newFolder, false)
     -- end
-    if imgui.button("GiveItem") then
-
-        ItemBox.AddItem("GrenadeLauncher", 1)
-        ItemBox.AddItem("HyperBlaster", 1)
-        ItemBox.AddItem("RedBlaster", 1)
-        ItemBox.AddItem("UnlimitedAmmo", 1)
+    if imgui.button("1") then
+        -- gameManager = Scene.getGameManager()
+        -- gameManager:call("playerChangeRequest(app.GameManager.PlayerChangeType, System.Boolean)", 1, true)
+        ItemBox.AddItem("Stimulant", 5)
+        ItemBox.AddItem("Depressant", 5)
+        
     end
+    if imgui.button("0") then
+        -- gameManager = Scene.getGameManager()
+        -- gameManager:call("playerChangeRequest(app.GameManager.PlayerChangeType, System.Boolean)", 0, true)
+        ItemBox.AddItem("UnlimitedAmmo", 1)
+        ItemBox.AddItem("Burner",1)
+    end
+
 
     imgui.pop_font()
     imgui.end_window()

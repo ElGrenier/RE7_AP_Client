@@ -1,30 +1,30 @@
 local ItemBox = {}
 
--- function ItemBox.GetAnyAvailable()
---     --local scene = Scene.getSceneObject()
---     local gimmick_objects = scene:call("findComponents", sdk.typeof(sdk.game_namespace("InteractSendFsm")))
+function ItemBox.GetAnyAvailable()
+    --local scene = Scene.getSceneObject()
+    local gimmick_objects = scene:call("findComponents", sdk.typeof(sdk.game_namespace("InteractSendFsm")))
    
---     for k, comp in pairs(gimmick_objects) do
---         local gimmick = comp:call("get_GameObject()")
---         local gimmickName = gimmick:call("get_Name()")
+    for k, comp in pairs(gimmick_objects) do
+        local gimmick = comp:call("get_GameObject()")
+        local gimmickName = gimmick:call("get_Name()")
 
---         -- if the gimmick contains "ItemLocker" and contains "_control", it's an item box
---         -- not checking if it *starts* with "ItemLocker" because Capcom likes to add crap to the beginning of the names (looking at you RE3R)
---         -- (also, Lua is a terrible language with no modern features)
---         if string.find(gimmickName, "ItemBox") then
---             return gimmick
+        -- if the gimmick contains "ItemLocker" and contains "_control", it's an item box
+        -- not checking if it *starts* with "ItemLocker" because Capcom likes to add crap to the beginning of the names (looking at you RE3R)
+        -- (also, Lua is a terrible language with no modern features)
+        if string.find(gimmickName, "ItemBox") then
+            return gimmick
 
---             -- local compGimmickControl = gimmick:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("gimmick.action.GimmickControl")))
+            -- local compGimmickControl = gimmick:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("gimmick.action.GimmickControl")))
 
---             -- -- now, check if the item box has a map assigned and that map is active
---             -- if compGimmickControl ~= nil and compGimmickControl:get_field("_IsPairComplete") then
---             --     return gimmick
---             -- end
---         end
---     end
+            -- -- now, check if the item box has a map assigned and that map is active
+            -- if compGimmickControl ~= nil and compGimmickControl:get_field("_IsPairComplete") then
+            --     return gimmick
+            -- end
+        end
+    end
 
---     return nil
--- end
+    return nil
+end
 
 -- function ItemBox.GetItems()
 --     itemLocker = ItemBox.GetAnyAvailable()
@@ -65,6 +65,19 @@ local function get_localplayer()
 
 	return object_man:get_field("PlayerObj")
 end
+
+local known_typeofs = {}
+local function get_component(game_object, type_name)
+	local t = known_typeofs[type_name] or sdk.typeof(type_name)
+
+	if t == nil then
+		return nil
+	end
+
+	known_typeofs[type_name] = t
+	return game_object:call("getComponent(System.Type)", t)
+end
+
 
 
 function ItemBox.AddItem(itemId, count)

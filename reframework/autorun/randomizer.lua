@@ -9,22 +9,22 @@ log.debug("[Randomizer] Loading mod...")
 
 
 -- START globals
--- AP_REF = require("AP_REF/core")
+AP_REF = require("AP_REF/core")
 
 Manifest = require("randomizer/Manifest")
 Lookups = require("randomizer/Lookups")
 
--- Archipelago = require("randomizer/Archipelago")
--- DestroyObjects = require("randomizer/DestroyObjects")
+Archipelago = require("randomizer/Archipelago")
+DestroyObjects = require("randomizer/DestroyObjects")
 GUI = require("randomizer/GUI")
 Helpers = require("randomizer/Helpers")
--- Inventory = require("randomizer/Inventory")
+Inventory = require("randomizer/Inventory")
 ItemBox = require("randomizer/ItemBox")
--- Items = require("randomizer/Items")
+Items = require("randomizer/Items")
 Player = require("randomizer/Player")
 Scene = require("randomizer/Scene")
--- StartingWeapon = require("randomizer/StartingWeapon")
--- Storage = require("randomizer/Storage")
+StartingWeapon = require("randomizer/StartingWeapon")
+Storage = require("randomizer/Storage")
 Typewriters = require("randomizer/Typewriters")
 Tools = require("randomizer/Tools")
 -- END globals
@@ -40,51 +40,51 @@ Lookups.Load("Ethan", "a" ,"normal")
 --   that has references to "MyRooms" and "MyLocations", and something about "IsPairComplete"
 
 
--- re.on_pre_application_entry("UpdateBehavior", function()
---     if Scene:isInGame() then 
---         -- Archipelago.Init()
---         -- Items.Init()
---         -- DestroyObjects.Init()
---         -- StartingWeapon.Init()
+re.on_pre_application_entry("UpdateBehavior", function()
+    if Scene:isInGame() then 
+        Archipelago.Init()
+        Items.Init()
+        DestroyObjects.Init()
+        StartingWeapon.Init()
 
---         -- if Archipelago.waitingForSync then
---         --     Archipelago.waitingForSync = false
---         --     Archipelago.Sync()
---         -- end
+        if Archipelago.waitingForSync then
+            Archipelago.waitingForSync = false
+            Archipelago.Sync()
+        end
 
---         -- if Archipelago.CanReceiveItems() then
---         --     Archipelago.ProcessItemsQueue()
---         -- end
+        if Archipelago.CanReceiveItems() then
+            Archipelago.ProcessItemsQueue()
+        end
 
---         -- if the game randomly forgets that the player exists and tries to leave the invincibility flag on from item pickup,
---         --   relentlessly check for the player existing until it does, then turn that flag off
---         if Archipelago.waitingForInvincibiltyOff then
---             if Player.TurnOffInvincibility() then
---                 Archipelago.waitingForInvincibiltyOff = false
---             end
---         end
+        -- if the game randomly forgets that the player exists and tries to leave the invincibility flag on from item pickup,
+        --   relentlessly check for the player existing until it does, then turn that flag off
+        if Archipelago.waitingForInvincibiltyOff then
+            if Player.TurnOffInvincibility() then
+                Archipelago.waitingForInvincibiltyOff = false
+            end
+        end
 
---         if Player.waitingForKill then
---             Player.Kill()
---         else
---             Archipelago.canDeathLink = true
---             Archipelago.wasDeathLinked = false
---         end
---     else
---         DestroyObjects.isInit = false -- look for objects that should be destroyed and destroy them again
---     end
+        if Player.waitingForKill then
+            Player.Kill()
+        else
+            Archipelago.canDeathLink = true
+            Archipelago.wasDeathLinked = false
+        end
+    else
+        DestroyObjects.isInit = false -- look for objects that should be destroyed and destroy them again
+    end
 
---     if Scene:isGameOver() then
---         if Archipelago.canDeathLink and not Archipelago.wasDeathLinked then
---             Archipelago.canDeathLink = false
---             Archipelago:SendDeathLink()
---         end
+    if Scene:isGameOver() then
+        if Archipelago.canDeathLink and not Archipelago.wasDeathLinked then
+            Archipelago.canDeathLink = false
+            Archipelago:SendDeathLink()
+        end
         
---         if not Archipelago.waitingForSync then
---             Archipelago.waitingForSync = true
---         end
---     end
--- end)
+        if not Archipelago.waitingForSync then
+            Archipelago.waitingForSync = true
+        end
+    end
+end)
 
 re.on_frame(function ()
     -- ... one day OpieOP
