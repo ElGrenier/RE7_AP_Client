@@ -114,19 +114,20 @@ function Items.SetupInteractHook()
             end
         
             local isLocationRandomized = Archipelago.IsLocationRandomized(location_to_check)
-
+            log.debug("Tried to remove the object? 2")
             if Archipelago.IsItemLocation(location_to_check) and (Archipelago.SendLocationCheck(location_to_check) or Archipelago.IsConnected()) then
 
                 -- if it's an item, call vanish and save to get rid of it
                 if item_positions and isLocationRandomized then
                     -- this is where I'd unset invincibility... IF I KNEW HOW TO (might not need to, idk)
                     
-                    --item_positions:call('disableFromScene()')
-                    --item_positions:call('destroyItemExternal()') -- destroyItem also doesn't work
-                    --item_positions:call('lostItem(via.GameObject)', Player.GetGameObject())
+                    item_positions:call('disableFromScene()')
+                    item_positions:call('destroyItemExternal()') -- destroyItem also doesn't work
+                    item_positions:call('lostItem(via.GameObject)', Player.GetGameObject())
 
                     -- this still does the inspection animation as normal, but at least it actually doesn't break interactions entirely like the attempts above
                     item_positions:set_field("ItemStackNum", 0) 
+                    log.debug("Tried to remove the object?")
                 end
                 
                 -- if string.find(item_name, "SafeBoxDial") then -- if it's a safe, cancel the next safe ui
@@ -140,6 +141,7 @@ function Items.SetupInteractHook()
         end
     end)
 end
+
 
 -- This is always broken with a new game, lol
 -- --------------------
@@ -249,40 +251,40 @@ function Items.SetupSafeUIHook()
 end
 
 -- this was a test to swap items to a different visual item. might not work anymore.
-function Items.SwapAllItemsTo(item_name)
-    scene = sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), sdk.find_type_definition("via.SceneManager"), "get_CurrentScene()")
-    item_objects = scene:call("findGameObjectsWithTag(System.String)", "Item")
+-- function Items.SwapAllItemsTo(item_name)
+--     scene = sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), sdk.find_type_definition("via.SceneManager"), "get_CurrentScene()")
+--     item_objects = scene:call("findGameObjectsWithTag(System.String)", "Item")
 
-    for k, item in pairs(item_objects:get_elements()) do
-        item_name = item:call("get_Name()")
-        item_folder = item:call("get_Folder()")
-        item_folder_path = item_folder:call("get_Path()")
-        item_component = item:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("item.ItemPositions")))
+--     for k, item in pairs(item_objects:get_elements()) do
+--         item_name = item:call("get_Name()")
+--         item_folder = item:call("get_Folder()")
+--         item_folder_path = item_folder:call("get_Path()")
+--         item_component = item:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("item.ItemPositions")))
 
-        if item_component then
-            item_id = item_component:get_field("InitializeItemId")
+--         if item_component then
+--             item_id = item_component:get_field("InitializeItemId")
 
-            if item_id then -- all item_numbers are hex to decimal, use decimal here
-                if new_item_name == "spray" then
-                    item_number = 1
-                    item_count = 1
-                elseif new_item_name == "handgun ammo" then
-                    item_number = 15
-                    item_count = 30
-                elseif new_item_name == "wood crate" then
-                    item_number = 294
-                    item_count = 1
-                elseif new_item_name == "picture block" then
-                    item_number = 98
-                    item_count = 1
-                end
+--             if item_id then -- all item_numbers are hex to decimal, use decimal here
+--                 if new_item_name == "spray" then
+--                     item_number = 1
+--                     item_count = 1
+--                 elseif new_item_name == "handgun ammo" then
+--                     item_number = 15
+--                     item_count = 30
+--                 elseif new_item_name == "wood crate" then
+--                     item_number = 294
+--                     item_count = 1
+--                 elseif new_item_name == "picture block" then
+--                     item_number = 98
+--                     item_count = 1
+--                 end
 
-                item_component:set_field("InitializeItemId", item_number)
-                item_component:set_field("InitializeCount", item_count)
-                item_component:call("createInitializeItem()")
-            end
-        end
-    end
-end
+--                 item_component:set_field("InitializeItemId", item_number)
+--                 item_component:set_field("InitializeCount", item_count)
+--                 item_component:call("createInitializeItem()")
+--             end
+--         end
+--     end
+-- end
 
 return Items

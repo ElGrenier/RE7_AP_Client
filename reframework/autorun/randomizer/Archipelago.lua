@@ -2,7 +2,6 @@ local Archipelago = {}
 Archipelago.seed = nil
 Archipelago.slot = nil
 Archipelago.starting_weapon = nil -- comes over in slot data
--- Archipelago.damage_traps_can_kill = false -- comes over in slot data
 Archipelago.death_link = false -- comes over in slot data
 Archipelago.hasConnectedPrior = false -- keeps track of whether the player has connected at all so players don't have to remove AP mod to play vanilla
 Archipelago.isInit = false -- keeps track of whether init things like handlers need to run
@@ -93,24 +92,20 @@ function Archipelago.SlotDataHandler(slot_data)
         Archipelago.starting_weapon = slot_data.starting_weapon
     end
 
-    -- if slot_data.damage_traps_can_kill ~= nil then
-    --     Archipelago.damage_traps_can_kill = slot_data.damage_traps_can_kill
-    -- end
-
     if slot_data.death_link ~= nil then
         Archipelago.death_link = slot_data.death_link
     end
 
-    Lookups.Load(slot_data.character, slot_data.scenario, string.lower(slot_data.difficulty))
+    Lookups.Load(string.lower(slot_data.difficulty))
     Storage.Load()
 
     GUI.AddTexts({
         { message='AP Scenario: ' },
-        { message=Lookups.character:gsub("^%l", string.upper) .. ' ' .. string.upper(Lookups.scenario) .. ' ' .. string.upper(Lookups.difficulty), color="green" }
+        { message=Lookups.difficulty:gsub("^%l", string.upper), color="green" }
     })
 
     for t, typewriter_name in pairs(slot_data.unlocked_typewriters) do
-        Typewriters.AddUnlockedText(typewriter_name, "", true) -- true for "no_save_warning"
+        -- Typewriters.AddUnlockedText(typewriter_name, "", true) -- true for "no_save_warning"
         Typewriters.Unlock(typewriter_name, "")
     end
 end
@@ -245,6 +240,7 @@ end
 AP_REF.on_print_json = APPrintJSONHandler
 
 function Archipelago.PrintJSONHandler(json_rows)
+    log.debug("Archipelago.PrintJSONHandler Executed")
     local player_sender, player_receiver, sender_number, receiver_number, item_id, location_id, item, location = nil
     local player = Archipelago.GetPlayer()
 
@@ -263,7 +259,7 @@ function Archipelago.PrintJSONHandler(json_rows)
             player_receiver = AP_REF.APClient:get_player_alias(tonumber(row["text"]))        
             receiver_number = tonumber(row["text"])
         elseif row["type"] ~= nil and row["type"] == "item_id" then
-            item_id = tonumber(row["text"])            
+            item_id = row["text"]           
             
             if (row["flags"] & 1) > 0 then
                 item_color = "ce28f7"
@@ -275,7 +271,7 @@ function Archipelago.PrintJSONHandler(json_rows)
                 item_color = "06bda1"
             end
         elseif row["type"] ~= nil and row["type"] == "location_id" then
-            location_id = tonumber(row["text"])
+            location_id = row["text"]
         end
     end
     
@@ -370,33 +366,6 @@ function Archipelago.IsLocationRandomized(location_data)
     return true
 end
 
--- function Archipelago.IsSentChessPanel(location_data)
---     local location = Archipelago._GetLocationFromLocationData(location_data, true) -- include_sent_locations
---     local scenario_suffix = " (" .. string.upper(string.sub(Lookups.character, 1, 1) .. Lookups.scenario) .. ")"
---     local scenario_suffix_hardcore = " (" .. string.upper(string.sub(Lookups.character, 1, 1) .. Lookups.scenario) .. "H)"
-
---     if not location then
---         return false
---     end
-
---     if string.find(location['name'], 'Queen Panel') or string.find(location['name'], 'King Panel') or string.find(location['name'], 'Rook Panel') or 
---         string.find(location['name'], 'Bishop Panel') or string.find(location['name'], 'Knight Panel') or string.find(location['name'], 'Pawn Panel') then 
-
---         for k, loc in pairs(Lookups.locations) do
---             location_name_with_region = loc['region'] .. scenario_suffix .. " - " .. loc['name']
---             location_name_with_region_hardcore = loc['region'] .. scenario_suffix_hardcore .. " - " .. loc['name']
-
---             if Lookups.difficulty == 'hardcore' and location['name'] == location_name_with_region_hardcore and loc['sent'] ~= nil and loc['sent'] then
---                 return true
---             elseif location['name'] == location_name_with_region and loc['sent'] ~= nil and loc['sent'] then
---                 return true
---             end
---         end
---     end
-
---     return false
--- end
-
 function Archipelago.GetLocationName(location_data)
     local location = Archipelago._GetLocationFromLocationData(location_data, true) -- include_sent_locations
 
@@ -433,14 +402,6 @@ function Archipelago.SendLocationCheck(location_data)
     local sent_loc = location['raw_data']    
 
     for k, loc in pairs(Lookups.locations) do
-    --     -- StartArea/SherryRoom is the shotgun shell location at start of Labs that can *also* be a shotgun if you haven't gotten one
-    --     -- and it's only 1 location so, if it's there, match it regardless of anything else
-    --     if (string.find(loc['folder_path'], 'StartArea/SherryRoom') and string.find(location_data['folder_path'], 'StartArea/SherryRoom')) or 
-    --         (string.find(loc['folder_path'], 'StartArea/Sherry Room') and string.find(location_data['folder_path'], 'StartArea/Sherry Room')) 
-    --     then
-    --         loc['sent'] = true
-    --         break
-    --     end
 
         local exact_match = true
 
@@ -488,13 +449,13 @@ function Archipelago.ReceiveItem(item_name, sender, is_randomized)
     for k, item in pairs(Lookups.items) do
         if item.name == item_name then
             item_ref = item
-            item_number = item.decimal
+            item_number = item.game_id
             
             -- if it's a weapon, look up its ammo as well and set to item_ammo
             if item.type == "Weapon" and item.ammo ~= nil then
                 for k2, item2 in pairs(Lookups.items) do
                     if item2.name == item.ammo then
-                        item_ammo = item2.decimal
+                        item_ammo = item2.game_id
 
                         break
                     end
@@ -540,50 +501,35 @@ function Archipelago.ReceiveItem(item_name, sender, is_randomized)
         local sentToBox = false
 
         if is_randomized > 0 then
-            -- if item_name == "Damage Trap" then
-            --     Player.Damage(Archipelago.damage_traps_can_kill)
-            --     GUI.AddReceivedItemText(item_name, item_color, tostring(AP_REF.APClient:get_player_alias(sender)), tostring(player_self.alias), sentToBox)
+    
+            -- if item_name == "Hip Pouch" then
+            --     if Inventory.GetMaxSlots() <= 18 then
+            --         Inventory.IncreaseMaxSlots(2) -- simulate receiving the hip pouch by increasing player inv slots by 2
+            --         GUI.AddReceivedItemText(item_name, item_color, tostring(AP_REF.APClient:get_player_alias(sender)), tostring(player_self.alias), sentToBox)
+            --     else
+            --         GUI.AddText("Received Hip Pouch, but inventory is at maximum size. Ignoring.")
+            --     end
 
             --     return
             -- end
 
-            -- if item_name == "Poison Trap" then
-            --     Player.Poison()
-            --     GUI.AddReceivedItemText(item_name, item_color, tostring(AP_REF.APClient:get_player_alias(sender)), tostring(player_self.alias), sentToBox)
-
-            --     return
-            -- end
-
-            -- max slots is 20, so only process a new hip pouch if it will result in no more than 20
-            if item_name == "Hip Pouch" then
-                if Inventory.GetMaxSlots() <= 18 then
-                    Inventory.IncreaseMaxSlots(2) -- simulate receiving the hip pouch by increasing player inv slots by 2
-                    GUI.AddReceivedItemText(item_name, item_color, tostring(AP_REF.APClient:get_player_alias(sender)), tostring(player_self.alias), sentToBox)
-                else
-                    GUI.AddText("Received Hip Pouch, but inventory is at maximum size. Ignoring.")
-                end
-
-                return
-            end
-
-            -- sending weapons to inventory causes them to not work until boxed + retrieved, so send weapons to box always for now
-            -- also send 2-slot wide items to box by default
+            -- -- sending weapons to inventory causes them to not work until boxed + retrieved, so send weapons to box always for now
+            -- -- also send 2-slot wide items to box by default
             if 
-                item_ref.type ~= "Weapon" and item_ref.type ~= "Subweapon" and Inventory.HasSpaceForItem() and
-                (item_name ~= "Large Gear" and item_name ~= "Joint Plug")
+                item_ref.type ~= "Weapon" and item_ref.type ~= "Subweapon" and Inventory.HasSpaceForItem()
             then
-                local addedToInv = Inventory.AddItem(tonumber(itemId), tonumber(weaponId), weaponParts, bulletId, tonumber(count))
+                local addedToInv = Inventory.AddItem(itemId, count)
 
                 -- if adding to inventory failed, add it to the box as a backup
                 if addedToInv then
                     sentToBox = false
                 else
-                    ItemBox.AddItem(tonumber(itemId), tonumber(weaponId), weaponParts, bulletId, tonumber(count))
+                    ItemBox.AddItem(itemId, count)
                     sentToBox = true    
                 end
             -- if this item is a weapon/subweapon or the player doesn't have room in inventory, send to the box
             else
-                ItemBox.AddItem(tonumber(itemId), tonumber(weaponId), weaponParts, bulletId, tonumber(count))
+                ItemBox.AddItem(itemId, count)
                 sentToBox = true
             end
         end
@@ -613,80 +559,62 @@ function Archipelago._GetItemFromItemsData(item_data)
 end
 
 function Archipelago._GetLocationFromLocationData(location_data, include_sent_locations)
+    log.debug("Archipelago._GetLocationFromLocationData Executed")
     local player = Archipelago.GetPlayer()
 
     include_sent_locations = include_sent_locations or false
 
     local translated_location = {}
-    local scenario_suffix = " (" .. string.upper(string.sub(Lookups.character, 1, 1) .. Lookups.scenario) .. ")"
-    local scenario_suffix_hardcore = " (" .. string.upper(string.sub(Lookups.character, 1, 1) .. Lookups.scenario) .. "H)"
+
+    -- local scenario_suffix = " (" .. string.upper(string.sub(Lookups.character, 1, 1) .. Lookups.scenario) .. ")"
+    -- local scenario_suffix_hardcore = " (H)"
 
     if location_data['id'] and not location_data['name'] then
         location_data['name'] = AP_REF.APClient:get_location_name(location_data['id'], player['game'])
     end
 
     -- if the difficulty is hardcore, loop first looking for hardcore locations only so we can prioritize matching those
-    if Lookups.difficulty == 'hardcore' then
-        for k, loc in pairs(Lookups.locations) do
-            if loc['hardcore'] ~= nil and loc['hardcore'] then -- if it doesn't have the hardcore attribute, it's not a hardcore location, skip it for later
-                location_name_with_region_hardcore = loc['region'] .. scenario_suffix_hardcore .. " - " .. loc['name']
+    -- if Lookups.difficulty == 'hardcore' then
+    --     for k, loc in pairs(Lookups.locations) do
+    --         if loc['hardcore'] ~= nil and loc['hardcore'] then -- if it doesn't have the hardcore attribute, it's not a hardcore location, skip it for later
+    --             location_name_with_region_hardcore = loc['region'] .. scenario_suffix_hardcore .. " - " .. loc['name']
         
-                if location_data['name'] == location_name_with_region_hardcore then
-                    translated_location['name'] = location_name_with_region_hardcore
-                    translated_location['raw_data'] = loc
+    --             if location_data['name'] == location_name_with_region_hardcore then
+    --                 translated_location['name'] = location_name_with_region_hardcore
+    --                 translated_location['raw_data'] = loc
         
-                    break
-                end
-        
-                -- if include_sent_locations or not loc['sent'] then
-                --     -- StartArea/SherryRoom is the shotgun shell location at start of Labs that can *also* be a shotgun if you haven't gotten one
-                --     -- and it's only 1 location so, if it's there, match it regardless of item object + parent object
-                --     if (loc['item_object'] == location_data['item_object'] and loc['parent_object'] == location_data['parent_object'] and loc['folder_path'] == location_data['folder_path']) or
-                --         (loc['folder_path'] ~= nil and location_data['folder_path'] ~= nil and string.find(loc['folder_path'], 'StartArea/SherryRoom') and string.find(location_data['folder_path'], 'StartArea/SherryRoom')) or 
-                --         (loc['folder_path'] ~= nil and location_data['folder_path'] ~= nil and string.find(loc['folder_path'], 'StartArea/Sherry Room') and string.find(location_data['folder_path'], 'StartArea/Sherry Room')) 
-                --     then
-                --         translated_location['name'] = location_name_with_region_hardcore
-                --         translated_location['raw_data'] = loc
-        
-                --         break
-                --     end
-                -- end
-            end
-        end
-    end -- end if hardcore diff and looking for hardcore locations
+    --                 break
+    --             end
+    --         end
+    --     end
+    -- end -- end if hardcore diff and looking for hardcore locations
 
     -- if it's not hardcore difficulty or if the location wasn't matched to a hardcore one, match standard locations instead
     if not translated_location['name'] then
         for k, loc in pairs(Lookups.locations) do
-            if not (loc['hardcore'] ~= nil and loc['hardcore']) then -- if it's a hardcore location, we want to skip it here, since we're only handling standards
-                location_name_with_region = loc['region'] .. scenario_suffix .. " - " .. loc['name']
+            -- if not (loc['hardcore'] ~= nil and loc['hardcore']) then -- if it's a hardcore location, we want to skip it here, since we're only handling standards
+            location_name_with_region = loc['region'] .. " - " .. loc['name']
 
-                if location_data['name'] == location_name_with_region then
-                    translated_location['name'] = location_name_with_region
-                    translated_location['raw_data'] = loc
-
-                    break
-                end
-
-                -- if include_sent_locations or not loc['sent'] then
-                --     -- StartArea/SherryRoom is the shotgun shell location at start of Labs that can *also* be a shotgun if you haven't gotten one
-                --     -- and it's only 1 location so, if it's there, match it regardless of item object + parent object
-                --     if (loc['item_object'] == location_data['item_object'] and loc['parent_object'] == location_data['parent_object'] and loc['folder_path'] == location_data['folder_path']) or
-                --         (loc['folder_path'] ~= nil and location_data['folder_path'] ~= nil and string.find(loc['folder_path'], 'StartArea/SherryRoom') and string.find(location_data['folder_path'], 'StartArea/SherryRoom')) or 
-                --         (loc['folder_path'] ~= nil and location_data['folder_path'] ~= nil and string.find(loc['folder_path'], 'StartArea/Sherry Room') and string.find(location_data['folder_path'], 'StartArea/Sherry Room')) 
-                --     then
-                --         translated_location['name'] = location_name_with_region
-                --         translated_location['raw_data'] = loc
-
-                --         break
-                --     end
-                -- end
+            if location_data['name'] == location_name_with_region then
+                translated_location['name'] = location_name_with_region
+                translated_location['raw_data'] = loc
+                break
             end
         end
     end -- end if standard diff and looking for standard locations
 
-    if not translated_location['name'] then
-        return nil
+    -- Fallback: try to match location from object data if no name matched
+    if not translated_location['name'] and location_data['item_object'] ~= nil then
+        for _, loc in pairs(Lookups.locations) do
+            if loc['item_object'] == location_data['item_object'] and
+            loc['parent_object'] == location_data['parent_object'] and
+            loc['folder_path'] == location_data['folder_path'] then
+
+                translated_location['name'] = loc['region'] .. " - " .. loc['name']
+                translated_location['raw_data'] = loc
+                break
+            end
+        end
     end
 
     translated_location['id'] = AP_REF.APClient:get_location_id(translated_location['name'], player['game'])
@@ -699,7 +627,6 @@ function Archipelago.Reset()
     Archipelago.seed = nil
     Archipelago.slot = nil
     Archipelago.starting_weapon = nil
-    -- Archipelago.damage_traps_can_kill = false
     Archipelago.death_link = false
     Archipelago.itemsQueue = {}
 end

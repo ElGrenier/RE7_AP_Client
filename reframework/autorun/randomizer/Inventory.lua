@@ -1,7 +1,24 @@
 local Inventory = {}
 
+
+
+
+local function get_component(game_object, type_name)
+	local t = known_typeofs[type_name] or sdk.typeof(type_name)
+
+	if t == nil then
+		return nil
+	end
+
+	known_typeofs[type_name] = t
+	return game_object:call("getComponent(System.Type)", t)
+end
+
+
+
+
 function Inventory.GetInventoryManager()
-    return sdk.get_managed_singleton(sdk.game_namespace("InventoryManager"))
+    return get_component(get_localplayer(), "app.Inventory")
 end
 
 function Inventory.GetInventoryClassObject()
@@ -104,7 +121,7 @@ function Inventory.HasItemId(item_id, weapon_id)
     return false
 end
 
-function Inventory.AddItem(itemId, weaponId, weaponParts, bulletId, count)
+function Inventory.AddItem(itemId, count)
     log.debug("1")
     local itemSlotManager = Inventory.GetSlotManagerClassObject()    
     log.debug("2")
