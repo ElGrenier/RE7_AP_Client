@@ -2,7 +2,7 @@ local Inventory = {}
 
 
 
-
+known_typeofs = {}
 local function get_component(game_object, type_name)
 	local t = known_typeofs[type_name] or sdk.typeof(type_name)
 
@@ -14,6 +14,16 @@ local function get_component(game_object, type_name)
 	return game_object:call("getComponent(System.Type)", t)
 end
 
+local function get_localplayer()
+	local object_man = sdk.get_managed_singleton("app.ObjectManager")
+
+	if not object_man then
+		return nil
+	end
+
+	return object_man:get_field("PlayerObj")
+end
+
 
 
 
@@ -23,12 +33,29 @@ end
 
 function Inventory.GetInventoryClassObject()
     local inventoryManager = Inventory.GetInventoryManager()
+    if not inventoryManager then
+        log.debug("InventoryManager is nil!")
+        return nil
+    end
     
-    return inventoryManager:get_field("_Inventory")
+    local inventory = inventoryManager:get_field("_Inventory")
+    if not inventory then
+        log.debug("Inventory class object (_Inventory) is nil!")
+    end
+    return inventory
 end
 
 function Inventory.GetSlotManagerClassObject()
-    return Inventory.GetInventoryClassObject():get_field("<ItemSlotManager>k__BackingField")
+    local invClassObj = Inventory.GetInventoryClassObject()
+    if not invClassObj then
+        log.debug("Inventory class object is nil in GetSlotManagerClassObject()!")
+        return nil
+    end
+    local slotManager = invClassObj:get_field("<ItemSlotManager>k__BackingField")
+    if not slotManager then
+        log.debug("SlotManagerClassObject is nil!")
+    end
+    return slotManager
 end
 
 function Inventory.GetNextAvailableSlot()
@@ -142,37 +169,37 @@ function Inventory.AddItem(itemId, count)
     end
 
 
-    -- for k, itemComp in pairs(allItems) do
-    --     if itemComp ~= nil then
-    --         local itemDataId = itemComp:get_field("ItemDataID")
+    for k, itemComp in pairs(allItems) do
+        if itemComp ~= nil then
+            local itemDataId = itemComp:get_field("ItemDataID")
 
-    --         if itemDataId ~= nil then
-    --             log.debug("item data id: " .. tostring(itemDataId))
-    --         end
+            if itemDataId ~= nil then
+                log.debug("item data id: " .. tostring(itemDataId))
+            end
 
-    --         if weaponId ~= nil and weaponId > 0 and false then -- is a weapon, replace false with actual checking
-    --             log.debug("foo")
-    --         elseif itemId ~= nil and itemId == itemDataId then
-    --             local itemGameObject = itemComp:call("get_GameObject")
-    --             local itemGameObjectFolder = itemGameObject:call("get_Folder")
-    --             local newGameObject = Helpers.gameObject("rrr_" .. itemId)
+            if weaponId ~= nil and weaponId > 0 and false then -- is a weapon, replace false with actual checking
+                log.debug("foo")
+            elseif itemId ~= nil and itemId == itemDataId then
+                local itemGameObject = itemComp:call("get_GameObject")
+                local itemGameObjectFolder = itemGameObject:call("get_Folder")
+                local newGameObject = Helpers.gameObject("rrr_" .. itemId)
                 
-    --             if newGameObject == nil then
-    --                 newGameObject = itemGameObject:call("create(System.String, via.Folder)", "rrr_" .. itemId, itemGameObjectFolder)
-    --             end
+                if newGameObject == nil then
+                    newGameObject = itemGameObject:call("create(System.String, via.Folder)", "rrr_" .. itemId, itemGameObjectFolder)
+                end
 
-    --             local newComp = newGameObject:call("createComponent(System.Type)", sdk.typeof(sdk.game_namespace("Item")))
+                local newComp = newGameObject:call("createComponent(System.Type)", sdk.typeof(sdk.game_namespace("Item")))
 
-    --             log.debug(tostring(newComp))
-    --             log.debug(tostring(newGameObject))
+                log.debug(tostring(newComp))
+                log.debug(tostring(newGameObject))
 
-    --             newComp:set_field("ItemDataID", itemId)
-    --             newComp:set_field("ItemStackNum", count)
+                newComp:set_field("ItemDataID", itemId)
+                newComp:set_field("ItemStackNum", count)
 
-    --             inventoryClassObject:call("addItem(app.Item, via.GameObject)", newComp, newGameObject)
-    --         end
-    --     end
-    -- end
+                inventoryClassObject:call("addItem(app.Item, via.GameObject)", newComp, newGameObject)
+            end
+        end
+    end
 
 
     return false

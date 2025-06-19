@@ -121,9 +121,9 @@ function Items.SetupInteractHook()
                 if item_positions and isLocationRandomized then
                     -- this is where I'd unset invincibility... IF I KNEW HOW TO (might not need to, idk)
                     
-                    item_positions:call('disableFromScene()')
-                    item_positions:call('destroyItemExternal()') -- destroyItem also doesn't work
-                    item_positions:call('lostItem(via.GameObject)', Player.GetGameObject())
+                    -- item_positions:call('disableFromScene()')
+                    -- item_positions:call('destroyItemExternal()') -- destroyItem also doesn't work
+                    -- item_positions:call('lostItem(via.GameObject)', Player.GetGameObject())
 
                     -- this still does the inspection animation as normal, but at least it actually doesn't break interactions entirely like the attempts above
                     item_positions:set_field("ItemStackNum", 0) 

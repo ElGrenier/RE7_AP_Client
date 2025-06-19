@@ -467,7 +467,7 @@ function Archipelago.ReceiveItem(item_name, sender, is_randomized)
     end
 
     if item_ref and item_number then
-        local itemId, weaponId, weaponParts, bulletId, count = nil
+        local itemId, weaponId, bulletId, count = nil
 
         if item_ref.type == "Weapon" or item_ref.type == "Subweapon" then
             itemId = -1
@@ -512,9 +512,8 @@ function Archipelago.ReceiveItem(item_name, sender, is_randomized)
 
             --     return
             -- end
-
-            -- -- sending weapons to inventory causes them to not work until boxed + retrieved, so send weapons to box always for now
-            -- -- also send 2-slot wide items to box by default
+            
+            -- -- send 2-slot wide items to box by default
             if 
                 item_ref.type ~= "Weapon" and item_ref.type ~= "Subweapon" and Inventory.HasSpaceForItem()
             then

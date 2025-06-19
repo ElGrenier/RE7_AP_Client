@@ -1,5 +1,14 @@
 [
     {
+        "name": "Red Bench by Stairs",
+        "region": "Main Hall",
+        "original_item": "Ink Ribbon",
+        "condition": {},
+        "item_object": "sm70_201",
+        "parent_object": "InkRibbon_Garden_2nd",
+        "folder_path": "RopewayContents/World/Location_RPD/LocationLevel_RPD/Item/common/InkRibbon"
+    },
+	{
         "name": "Main Desk",
         "region": "Main Hall",
         "original_item": "Ink Ribbon",
@@ -10,7 +19,7 @@
     },
     {
         "name": "Right Locker",
-        "region": "Darkroom",
+        "region": "Main Hall",
         "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
@@ -18,8 +27,8 @@
         "folder_path": "RopewayContents/World/Location_RPD/LocationLevel_RPD/Item/common/1F/1FW/DarkRoom/Locker_sm70_100_HandgunB_HardInkribbon"
     },
     {
-        "name": "Table By Door",
-        "region": "East Office",
+        "name": "Table by Door",
+        "region": "Main Hall",
         "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
@@ -28,7 +37,7 @@
     },
     {
         "name": "Desk",
-        "region": "Secret Room",
+        "region": "Main Hall",
         "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
@@ -37,7 +46,7 @@
     },
     {
         "name": "Locker",
-        "region": "Operators Room",
+        "region": "Main Hall",
         "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
@@ -46,7 +55,7 @@
     },
     {
         "name": "Desk",
-        "region": "Boiler Room",
+        "region": "Main Hall",
         "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
@@ -54,8 +63,8 @@
         "folder_path": "RopewayContents/World/Location_RPD/LocationLevel_RPD/Item/common/InkRibbon"
     },
     {
-        "name": "Chair Across Room",
-        "region": "Interrogation Room",
+        "name": "Chair across Room",
+        "region": "Main Hall",
         "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
@@ -64,7 +73,7 @@
     },
     {
         "name": "Printer",
-        "region": "Records Room",
+        "region": "Main Hall",
         "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
@@ -72,8 +81,8 @@
         "folder_path": "RopewayContents/World/Location_RPD/LocationLevel_RPD/Item/common/InkRibbon"
     },
     {
-        "name": "Barrels Before Alligator Cutscene",
-        "region": "Sewers Entrance",
+        "name": "Barrels before Alligator Cutscene",
+        "region": "Main Hall",
         "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
@@ -82,7 +91,7 @@
     },
     {
         "name": "Table with Raccoon Milk",
-        "region": "Monitor Room",
+        "region": "Main Hall",
         "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
@@ -90,8 +99,8 @@
         "folder_path": "RopewayContents/World/Location_WasteWater/LocationLevel_WasteWater/Item/common/Inkribbon"
     },
     {
-        "name": "Table Location 2",
-        "region": "Water Injection Chamber",
+        "name": "On Table 2",
+        "region": "Main Hall",
         "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
@@ -99,8 +108,8 @@
         "folder_path": "RopewayContents/World/Location_WasteWater/LocationLevel_WasteWater/Item/common/Inkribbon"
     },
     {
-        "name": "Trash Can By Saving Ada",
-        "region": "Main Power Room",
+        "name": "Trash Can by Saving Ada",
+        "region": "Main Hall",
         "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
@@ -109,7 +118,7 @@
     },
     {
         "name": "Reception Desk at Labs",
-        "region": "Cable Car Platform",
+        "region": "Main Hall",
         "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
@@ -118,7 +127,7 @@
     },
     {
         "name": "Front Desk",
-        "region": "Lobby",
+        "region": "Main Hall",
         "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
@@ -127,7 +136,7 @@
     },
     {
         "name": "Beside Typewriter",
-        "region": "P-4 Level Testing Lab",
+        "region": "Main Hall",
         "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
@@ -135,27 +144,21 @@
         "folder_path": "RopewayContents/World/Location_Laboratory/LocationLevel_Laboratory/Item/common/InkRibbon"
     },
     {
-        "name": "Boxes By Typewriter",
-        "region": "Path to Super Tyrant",
-        "original_item": "",
+        "name": "Boxes by Typewriter",
+        "region": "Main Hall",
+        "original_item": "Ink Ribbon",
         "condition": {},    
         "item_object": "sm70_201",
         "parent_object": "sm70_201",
         "folder_path": "RopewayContents/World/Location_LaboratoryUndermost/LocationLevel_LaboratoryUndermost/Item/common"
     },
     {
-    	"name": "Side Table",
-    	"region": "West Storage Room",
-    	"remove": true
-    },
-    {
-    	"name": "Left Table",
-    	"region": "Workroom",
-    	"remove": true
-    },
-    {
-    	"name": "Before Sanitation Spray",
-    	"region": "Biotesting Lab",
-    	"remove": true
+        "name": "Next to Gunpowder",
+        "region": "Main Hall",
+        "original_item": "Ink Ribbon",
+        "condition": {},    
+        "item_object": "sm70_201",
+        "parent_object": "sm70_201_G5",
+        "folder_path": "RopewayContents/World/Location_LaboratoryUndermost/LocationLevel_LaboratoryUndermost/Item/common"
     }
 ]

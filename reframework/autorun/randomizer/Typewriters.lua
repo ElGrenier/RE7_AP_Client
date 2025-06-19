@@ -110,7 +110,7 @@ function Typewriters.DisplayWarpMenu()
 
 
                 local playerObject = Player.GetGameObject()
-                local playerMovement = Helpers.component(playerObject, "PlayerMovement")
+                playerMovement = Helpers.component(playerObject, "PlayerMovement")
                 gameMaster = Scene.getGameMaster()
                 gameManager = Scene.getGameManager()
                 saveDataManager = Helpers.component(gameMaster, "SaveDataManager")
@@ -130,15 +130,31 @@ function Typewriters.DisplayWarpMenu()
                 end
 
                 
-                -- gameManager:call("set_CurrentChapter(app.GameManager.ChapterNo)", chapterNumber)
-                playerMovement:call("recovery(via.vec3)", posv3)
+                gameManager:call("set_CurrentChapter(app.GameManager.ChapterNo)", chapterNumber)
                 gameManager:call("deactivateFolder(via.Folder, System.Boolean)", oldFolder_2, false)
                 gameManager:call("deactivateFolder(via.Folder, System.Boolean)", oldFolder_1, false)
                 saveDataManager:call("folderLoadRequest(via.Folder, System.Boolean)", newFolder, false)
 
-                currentChapter = gameManager:call("get_CurrentChapter()")
-                log.debug(currentChapter)
+                playerMovement:call("recovery(via.vec3)", posv3)
 
+                -- currentChapter = gameManager:call("get_CurrentChapter()")
+                -- log.debug(currentChapter)
+                -- if chapterNumber == "Chapter1_Start" and currentChapter == 5 then
+                --     log.debug("Changing chapter 3 -> 1")
+                --     gameManager:call("chapterJumpRequest(System.String, System.Boolean, System.String)", chapterNumber, false, "")
+                -- elseif chapterNumber == "Chapter3_Start" and currentChapter == 4 then
+                --     log.debug("Changing chapter 1 -> 3")
+                --     gameManager:call("chapterJumpRequest(System.String, System.Boolean, System.String)", chapterNumber, false, "")
+                -- elseif chapterNumber == "Chapter3_Start" and not currentChapter == 5 then
+                --     log.debug("Teleporting Chapter 3")
+                --     playerMovement:call("recovery(via.vec3)", posv3)
+                -- elseif chapterNumber == "Chapter1_Start" and not currentChapter == 4 then
+                --     playerMovement:call("recovery(via.vec3)", posv3)
+                --     log.debug("Teleporting Chapter 1")
+                -- end
+
+                
+                
             end
         end
 
@@ -203,6 +219,14 @@ function Typewriters.DisplayWarpMenu()
         ItemBox.AddItem("UnlimitedAmmo", 1)
         ItemBox.AddItem("Burner",1)
     end
+        if imgui.button("Inventory") then
+        -- gameManager = Scene.getGameManager()
+        -- gameManager:call("playerChangeRequest(app.GameManager.PlayerChangeType, System.Boolean)", 0, true)
+        Inventory.AddItem("UnlimitedAmmo", 1)
+        ItemBox.AddItem("Burner",1)
+    end
+
+
 
 
     imgui.pop_font()
