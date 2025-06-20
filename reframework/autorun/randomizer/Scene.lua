@@ -3,6 +3,13 @@ local Scene = {}
 Scene.sceneObject = nil
 Scene.gameManager = nil
 
+scene_timer = 0
+while scene_timer < 100 and not pcall(function()
+	scene = sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), sdk.find_type_definition("via.SceneManager"), "get_CurrentScene()")
+	scene_timer = nil
+end) do scene_timer = scene_timer + 1 end
+
+
 function Scene.getSceneObject()
     if Scene.sceneObject ~= nil then
         return Scene.sceneObject
