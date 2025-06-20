@@ -24,15 +24,13 @@
 	"chapter": "Chapter4_Start"
    },
    { 
-        "name": "Main Entrance - CHAPTER 2",
-        "player_position": [31.65, 0.0, 12.03], 
+        "name": "Laverie - CHAPTER 2",
+        "player_position": [31.0, 0.17, 12.0], 
         "item_object": "sm0315_VoiceRecorder01A_Save",
-        "parent_object": "c03_Boat1FEntrance01_dynamic",
+        "parent_object": "c01_2F_dynamic",
         "folder_path": "Chapter/Chapter3",
 	"chapter":"Chapter3_Start"
-    },
-
-
+    }
 ]
 
 
