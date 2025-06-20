@@ -8,9 +8,9 @@ function Scene.getSceneObject()
         return Scene.sceneObject
     end
 
-    Scene.sceneObject = sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), sdk.find_type_definition("via.SceneManager"), "get_CurrentScene()")
+	scene = sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), sdk.find_type_definition("via.SceneManager"), "get_CurrentScene()")
 
-    return Scene.sceneObject
+    return scene
 end
 
 function Scene.getGameMaster()

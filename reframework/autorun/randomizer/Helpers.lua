@@ -1,7 +1,7 @@
 local Helpers = {}
 
 function Helpers.gameObject(obj_name)
-    return Scene.getSceneObject():findGameObject(obj_name)
+    return scene:call("findGameObject(System.String)", obj_name)
 end
 
 function Helpers.transform(obj)
