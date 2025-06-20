@@ -515,17 +515,17 @@ function Archipelago.ReceiveItem(item_name, sender, is_randomized)
             
             -- -- send 2-slot wide items to box by default
             if 
-                item_ref.type ~= "Weapon" and item_ref.type ~= "Subweapon" and Inventory.HasSpaceForItem()
+                item_ref.type ~= "Weapon" and item_ref.type ~= "Subweapon"
             then
-                local addedToInv = Inventory.AddItem(itemId, count)
+                -- local addedToInv = Inventory.AddItem(itemId, count)
 
-                -- if adding to inventory failed, add it to the box as a backup
-                if addedToInv then
-                    sentToBox = false
-                else
+                -- -- if adding to inventory failed, add it to the box as a backup
+                -- if addedToInv then
+                --     sentToBox = false
+                -- else
                     ItemBox.AddItem(itemId, count)
                     sentToBox = true    
-                end
+                -- end
             -- if this item is a weapon/subweapon or the player doesn't have room in inventory, send to the box
             else
                 ItemBox.AddItem(itemId, count)

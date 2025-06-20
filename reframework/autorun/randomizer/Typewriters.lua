@@ -206,25 +206,15 @@ function Typewriters.DisplayWarpMenu()
     --     gameManager:call("deactivateFolder(via.Folder, System.Boolean)", test, false)
     --     saveDataManager:call("folderLoadRequest(via.Folder, System.Boolean)", newFolder, false)
     -- end
-    if imgui.button("1") then
-        -- gameManager = Scene.getGameManager()
-        -- gameManager:call("playerChangeRequest(app.GameManager.PlayerChangeType, System.Boolean)", 1, true)
-        ItemBox.AddItem("Stimulant", 5)
-        ItemBox.AddItem("Depressant", 5)
-        
-    end
-    if imgui.button("0") then
-        -- gameManager = Scene.getGameManager()
-        -- gameManager:call("playerChangeRequest(app.GameManager.PlayerChangeType, System.Boolean)", 0, true)
-        ItemBox.AddItem("UnlimitedAmmo", 1)
-        ItemBox.AddItem("Burner",1)
-    end
-        if imgui.button("Inventory") then
-        -- gameManager = Scene.getGameManager()
-        -- gameManager:call("playerChangeRequest(app.GameManager.PlayerChangeType, System.Boolean)", 0, true)
-        Inventory.AddItem("UnlimitedAmmo", 1)
-        ItemBox.AddItem("Burner",1)
-    end
+    -- end
+        if imgui.button("Start Chapter 2") then
+            local gameManager = Scene.getGameManager()
+            gameManager:call("chapterJumpRequest(System.String, System.Boolean, System.String)", "Chapter3_Start", false, "")
+        end
+
+        if imgui.button("Itembox") then
+            ItemBox.AddItem("UnlimitedAmmo", 1)
+        end
 
 
 
