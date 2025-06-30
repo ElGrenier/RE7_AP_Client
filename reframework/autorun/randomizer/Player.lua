@@ -18,14 +18,16 @@ function Player.LookAt(transform)
 end
 
 function Player.Kill()
-    if Scene.isInPause() or Scene.isUsingItemBox() or not Scene.isInGame() then
-        Player.waitingForKill = true
+    if Archipelago.wasDeathLinked == false then
+        if Scene.isInPause() or Scene.isUsingItemBox() or not Scene.isInGame() then
+            Player.waitingForKill = true
 
-        return
+            return
+        end
+
+        Player.waitingForKill = false
+        Scene.goToGameOver()
     end
-
-    Player.waitingForKill = false
-    Scene.goToGameOver()
 end
 
 return Player

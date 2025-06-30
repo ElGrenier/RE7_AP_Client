@@ -7,7 +7,7 @@ Archipelago.hasConnectedPrior = false -- keeps track of whether the player has c
 Archipelago.isInit = false -- keeps track of whether init things like handlers need to run
 Archipelago.waitingForSync = false -- randomizer calls APSync when "waiting for sync"; i.e., when you die
 Archipelago.waitingForInvincibiltyOff = false -- occasionally, the game "forgets" who the player is, so this is a backup to toggle off item pickup invincibility
-Archipelago.canDeathLink = false -- this gets set to true when you're in-game, then a deathlink can send in game over and this is set to false again, repeat
+Archipelago.canDeathLink = false -- this gets set to true when you're in-game, then a deathlink can send in game over and this is set to false again, repeat -- Used in randomizer.lua
 Archipelago.wasDeathLinked = false -- this gets set to true when we're killed from a deathlink, so we don't trigger another deathlink (and a loop)
 
 Archipelago.itemsQueue = {}
@@ -100,7 +100,7 @@ function Archipelago.SlotDataHandler(slot_data)
     Storage.Load()
 
     GUI.AddTexts({
-        { message='AP Scenario: ' },
+        { message='AP Difficulty: ' },
         { message=Lookups.difficulty:gsub("^%l", string.upper), color="green" }
     })
 
@@ -118,8 +118,6 @@ AP_REF.on_items_received = APItemsReceivedHandler
 
 function Archipelago.ItemsReceivedHandler(items_received)
     local itemsWaiting = {}
-    -- local damageTrapReceived = false
-    -- local poisonTrapReceived = false
 
     -- add all of the randomized items to an item queue to wait for send
     for k, row in pairs(items_received) do
@@ -157,7 +155,7 @@ end
 function Archipelago.CanReceiveItems()
     -- wait until the player is in game, with AP connected, and with an available item box (that's not in use)
     -- before sending any items over
-    return Scene.isInGame() and Archipelago.IsConnected() and ItemBox.GetAnyAvailable() ~= nil and not Scene.isUsingItemBox()
+    return Scene.isInGame() and Archipelago.IsConnected() and not Scene.isUsingItemBox() and ItemBox.GetAnyAvailable()
 end
 
 function Archipelago.CanBeKilled()
@@ -240,7 +238,6 @@ end
 AP_REF.on_print_json = APPrintJSONHandler
 
 function Archipelago.PrintJSONHandler(json_rows)
-    log.debug("Archipelago.PrintJSONHandler Executed")
     local player_sender, player_receiver, sender_number, receiver_number, item_id, location_id, item, location = nil
     local player = Archipelago.GetPlayer()
 
@@ -250,11 +247,11 @@ function Archipelago.PrintJSONHandler(json_rows)
     end
 
     for k, row in pairs(json_rows) do
-        -- if it's a player id and no sender is set, it's the sender
+        -- if it's a player id and no sender is set, it's the sender (so the player send it?)
         if row["type"] ~= nil and row["type"] == "player_id" and not player_sender then
             player_sender = AP_REF.APClient:get_player_alias(tonumber(row["text"]))
             sender_number = tonumber(row["text"])
-        -- if it's a player id and the sender is set, it's the receiver
+        -- if it's a player id and the sender is set, it's the receiver (so the player receive it?)
         elseif row["type"] ~= nil and row["type"] == "player_id" and player_sender then
             player_receiver = AP_REF.APClient:get_player_alias(tonumber(row["text"]))        
             receiver_number = tonumber(row["text"])
@@ -317,6 +314,7 @@ function Archipelago.BouncedHandler(json_rows)
 
     if json_rows ~= nil and json_rows["tags"] ~= nil then
         -- why doesn't Lua have a way to "find" a value in a table? do we really have to create this from scratch?!
+        -- Check if in the json there a deathlink tag 
         for k, tag in pairs(json_rows["tags"]) do
             if tag == "DeathLink" then
                 if Archipelago.CanBeKilled() then
@@ -342,7 +340,7 @@ function Archipelago.BouncedHandler(json_rows)
     end
 end
 
-function Archipelago.IsItemLocation(location_data)
+function Archipelago.IsItemLocation(location_data) -- so it reuse the info used to summon this function in _GetLocationFromLocationData ? -- used in Items.lua
     local location = Archipelago._GetLocationFromLocationData(location_data, true) -- include_sent_locations
 
     if not location then
@@ -352,7 +350,7 @@ function Archipelago.IsItemLocation(location_data)
     return true
 end
 
-function Archipelago.IsLocationRandomized(location_data)
+function Archipelago.IsLocationRandomized(location_data) -- so it reuse the info used to summon this function in _GetLocationFromLocationData ? -- used in Items.lua
     local location = Archipelago._GetLocationFromLocationData(location_data, true) -- include_sent_locations
 
     if not location then
@@ -366,7 +364,8 @@ function Archipelago.IsLocationRandomized(location_data)
     return true
 end
 
-function Archipelago.GetLocationName(location_data)
+-- Never used ?? (Not in any LUA file)
+function Archipelago.GetLocationName(location_data) -- so it reuse the info used to summon this function in _GetLocationFromLocationData ? 
     local location = Archipelago._GetLocationFromLocationData(location_data, true) -- include_sent_locations
 
     if not location then
@@ -376,7 +375,7 @@ function Archipelago.GetLocationName(location_data)
     return location["name"]
 end
 
-function Archipelago.CheckForVictoryLocation(location_data)
+function Archipelago.CheckForVictoryLocation(location_data) -- so it reuse the info used to summon this function in _GetLocationFromLocationData ? -- Used in Items.lua
     local location = Archipelago._GetLocationFromLocationData(location_data)
 
     if location ~= nil and location["raw_data"]["victory"] then
@@ -388,7 +387,7 @@ function Archipelago.CheckForVictoryLocation(location_data)
     return false
 end
 
-function Archipelago.SendLocationCheck(location_data)
+function Archipelago.SendLocationCheck(location_data) -- so it reuse the info used to summon this function in _GetLocationFromLocationData ? -- Used in Items.lua
     local location = Archipelago._GetLocationFromLocationData(location_data)
     local location_ids = {}
 
@@ -398,7 +397,7 @@ function Archipelago.SendLocationCheck(location_data)
 
     location_ids[1] = location["id"]
 
-    local result = AP_REF.APClient.LocationChecks(AP_REF.APClient, location_ids)
+    local result = AP_REF.APClient.LocationChecks(AP_REF.APClient, location_ids) -- What was its use ???
     local sent_loc = location['raw_data']    
 
     for k, loc in pairs(Lookups.locations) do
@@ -422,7 +421,7 @@ function Archipelago.SendLocationCheck(location_data)
     return true
 end
 
-function Archipelago.SendDeathLink()
+function Archipelago.SendDeathLink() --Process Deathlink (obviously)
     -- if deathlink isn't enabled, don't send deathlinks
     if not Archipelago.death_link then
         return
@@ -434,14 +433,14 @@ function Archipelago.SendDeathLink()
 
     local deathLinkData = {
         time = timeOfDeath,
-        cause = playerName .. " died.",
+        cause = playerName .. " hugged a zombie.",
         source = playerName
     }
 
     AP_REF.APClient:Bounce(deathLinkData, nil, nil, { "DeathLink" }) -- data, games, slots, tags
 end
 
-function Archipelago.ReceiveItem(item_name, sender, is_randomized)
+function Archipelago.ReceiveItem(item_name, sender, is_randomized) -- Process receiving items (by checking the game_id in the items.json file)
     local item_ref = nil
     local item_number = nil
     local item_ammo = nil
@@ -533,7 +532,7 @@ function Archipelago.ReceiveItem(item_name, sender, is_randomized)
             end
         end
 
-        GUI.AddReceivedItemText(item_name, item_color, tostring(AP_REF.APClient:get_player_alias(sender)), tostring(player_self.alias), sentToBox)
+        GUI.AddReceivedItemText(item_name, item_color, tostring(AP_REF.APClient:get_player_alias(sender)), tostring(player_self.alias), sentToBox) -- Send info to player that he received an item
     end
 end
 
@@ -541,7 +540,7 @@ function Archipelago.SendVictory()
     AP_REF.APClient:StatusUpdate(AP_REF.AP.ClientStatus.GOAL)   
 end
 
-function Archipelago._GetItemFromItemsData(item_data)
+function Archipelago._GetItemFromItemsData(item_data) -- dunno what its use
     local player = Archipelago.GetPlayer()
     local translated_item = {}
     
@@ -557,19 +556,32 @@ function Archipelago._GetItemFromItemsData(item_data)
     return translated_item
 end
 
-function Archipelago._GetLocationFromLocationData(location_data, include_sent_locations)
-    log.debug("Archipelago._GetLocationFromLocationData Executed")
+
+local function TablesEqual(t1, t2)
+    if t1 == nil or t2 == nil then return false end
+    if #t1 ~= #t2 then return false end
+    for i = 1, #t1 do
+        if t1[i] ~= t2[i] then return false end
+    end
+    return true
+end
+
+
+
+
+
+function Archipelago._GetLocationFromLocationData(location_data, include_sent_locations) -- This is what is hell like
+    log.debug("DEBUG : Tried to Get Location From Location Data")
     local player = Archipelago.GetPlayer()
 
-    include_sent_locations = include_sent_locations or false
+    include_sent_locations = include_sent_locations or false -- Set to true by some function above
 
     local translated_location = {}
 
-    -- local scenario_suffix = " (" .. string.upper(string.sub(Lookups.character, 1, 1) .. Lookups.scenario) .. ")"
     -- local scenario_suffix_hardcore = " (H)"
 
     if location_data['id'] and not location_data['name'] then
-        location_data['name'] = AP_REF.APClient:get_location_name(location_data['id'], player['game'])
+        location_data['name'] = AP_REF.APClient:get_location_name(location_data['id'], player['game']) -- What is 'id' ?
     end
 
     -- if the difficulty is hardcore, loop first looking for hardcore locations only so we can prioritize matching those
@@ -589,8 +601,8 @@ function Archipelago._GetLocationFromLocationData(location_data, include_sent_lo
     -- end -- end if hardcore diff and looking for hardcore locations
 
     -- if it's not hardcore difficulty or if the location wasn't matched to a hardcore one, match standard locations instead
-    if not translated_location['name'] then
-        for k, loc in pairs(Lookups.locations) do
+    if not translated_location['name'] then -- Check if its not hardcore difficulty
+        for k, loc in pairs(Lookups.locations) do -- For K, loc in locations.json
             -- if not (loc['hardcore'] ~= nil and loc['hardcore']) then -- if it's a hardcore location, we want to skip it here, since we're only handling standards
             location_name_with_region = loc['region'] .. " - " .. loc['name']
 
@@ -603,20 +615,29 @@ function Archipelago._GetLocationFromLocationData(location_data, include_sent_lo
     end -- end if standard diff and looking for standard locations
 
     -- Fallback: try to match location from object data if no name matched
-    if not translated_location['name'] and location_data['item_object'] ~= nil then
+    if not translated_location['name'] and (location_data['parent_object'] ~= nil or location_data['item_position'] ~= nil) then -- loc = An entry of location.json (it goes for every itteration to check it), location_data = the location the player has gotten
         for _, loc in pairs(Lookups.locations) do
+            
             if loc['item_object'] == location_data['item_object'] and
-            loc['parent_object'] == location_data['parent_object'] and
-            loc['folder_path'] == location_data['folder_path'] then
+               loc['folder_path'] == location_data['folder_path'] then
 
-                translated_location['name'] = loc['region'] .. " - " .. loc['name']
-                translated_location['raw_data'] = loc
-                break
+                if loc['parent_object'] == location_data['parent_object'] and loc['item_position'] == nil then
+                    translated_location['name'] = loc['region'] .. " - " .. loc['name']
+                    translated_location['raw_data'] = loc
+                    break
+
+                elseif TablesEqual(loc['item_position'], location_data['item_position']) and loc['parent_object'] == nil then
+                    log.debug("ItemPositionChecked ELSEIF")
+                    translated_location['name'] = loc['region'] .. " - " .. loc['name']
+                    translated_location['raw_data'] = loc
+                    break
+                end
             end
         end
     end
-
+    
     translated_location['id'] = AP_REF.APClient:get_location_id(translated_location['name'], player['game'])
+
 
     -- now that we have name and id, return them
     return translated_location

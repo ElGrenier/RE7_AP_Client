@@ -2,17 +2,12 @@ local Items = {}
 Items.isInit = false -- keeps track of whether init things like hook need to run
 Items.lastInteractable = nil
 Items.cancelNextUI = false
-Items.cancelNextSafeUI = false
-Items.cancelNextStatueUI = false
 
 function Items.Init()
     if not Items.isInit then
         Items.isInit = true
 
         Items.SetupInteractHook()
-        Items.SetupDisconnectWaitHook()
-        Items.SetupSafeUIHook()
-        Items.SetupStatueUIHook()
     end
 end
 
@@ -38,7 +33,14 @@ end
 --     end)
 -- end
 
+
+function Items._Round(number)
+    return math.modf(number) -- put only the first digit
+end
+
+
 function Items.SetupInteractHook()
+    local interactManager = sdk.find_type_definition(sdk.game_namespace("InteractManager"))
     local interactType = sdk.find_type_definition(sdk.game_namespace("InteractObjectBase"))
     local interact_method = interactType:get_method("FsmExecute")
 
@@ -49,6 +51,16 @@ function Items.SetupInteractHook()
         
         item_name = feedbackParent:call("get_Name()")
         item_folder = feedbackParent:call("get_Folder()")
+        transform = feedbackParent:call("get_Transform()") 
+        pos = transform:call("get_Position()")
+        posx, posxdec = Items._Round(pos.x)
+        posy, posydec = Items._Round(pos.y)
+        posz, poszdec = Items._Round(pos.z)
+        item_position_path = { posx, posy, posz }
+        log.debug(item_name)
+        log.debug(tostring(item_folder))
+        log.debug("Item Position", "[" .. tostring(table.concat(item_position_path, ",")) .. "]")
+
         item_folder_path = nil
         item_parent_name = nil
 
@@ -97,6 +109,9 @@ function Items.SetupInteractHook()
             location_to_check['item_object'] = item_name
             location_to_check['parent_object'] = item_parent_name or ""
             location_to_check['folder_path'] = item_folder_path
+            location_to_check['item_position'] = item_position_path or ""
+
+
 
             -- If we're interacting with the victory location, send victory and bail
             if Archipelago.CheckForVictoryLocation(location_to_check) then
@@ -106,46 +121,29 @@ function Items.SetupInteractHook()
                 return
             end
 
-            -- If we run through a trigger named "AutoSaveArea", the game just auto-saved. So update last saved to last received.
-            if string.find(item_name, "AutoSaveArea") then
-                Storage.UpdateLastSavedItems()
-
-                return
-            end
         
             local isLocationRandomized = Archipelago.IsLocationRandomized(location_to_check)
-            log.debug("Tried to remove the object? 2")
+            log.debug("DEBUG : Try checking if item is an location to get/send")
+
             if Archipelago.IsItemLocation(location_to_check) and (Archipelago.SendLocationCheck(location_to_check) or Archipelago.IsConnected()) then
 
-                -- if it's an item, call vanish and save to get rid of it
+                -- if it's an item, call vanish to get rid of it
                 if item_positions and isLocationRandomized then
-                    -- this is where I'd unset invincibility... IF I KNEW HOW TO (might not need to, idk)
-                    
-                    -- item_positions:call('disableFromScene()')
-                    -- item_positions:call('destroyItemExternal()') -- destroyItem also doesn't work
-                    -- item_positions:call('lostItem(via.GameObject)', Player.GetGameObject())
 
-                    -- this still does the inspection animation as normal, but at least it actually doesn't break interactions entirely like the attempts above
+                    -- Vanish the item
                     item_positions:set_field("ItemStackNum", 0) 
-                    log.debug("Tried to remove the object?")
+                    
+                    log.debug("DEBUG : Try to remove the object from the world")
                 end
-                
-                -- if string.find(item_name, "SafeBoxDial") then -- if it's a safe, cancel the next safe ui
-                --     Items.cancelNextSafeUI = true
-                --     Items.lastInteractable = feedbackParent
-                -- elseif string.find(item_name, "HieroglyphicDialLock") then -- if it's a statue, cancel the next statue ui
-                --     Items.cancelNextStatueUI = true
-                --     Items.lastInteractable = feedbackParent
-                -- end
             end
         end
     end)
 end
 
 
--- This is always broken with a new game, lol
+-- This is always broken with a new game, lol -- Is this even needed ? I don't see the use ?
 -- --------------------
-function Items.SetupDisconnectWaitHook()
+-- function Items.SetupDisconnectWaitHook()
     -- local guiNewInventoryTypeDef = sdk.find_type_definition(sdk.game_namespace("gui.NewInventoryBehavior"))
     -- local guiNewInventoryMethod = guiNewInventoryTypeDef:get_method("setCaptionState")
 
@@ -159,11 +157,11 @@ function Items.SetupDisconnectWaitHook()
     --         compGuiMaster:closeInventoryForce()
     --     end
     -- end)
-end
+-- end
 
 -- Is this even needed by anything in RE7?
 -- -------------------------
-function Items.SetupStatueUIHook()
+-- function Items.SetupStatueUIHook()
     -- local gimmickStatueBehavior = sdk.find_type_definition(sdk.game_namespace("gimmick.action.GimmickDialLockBehavior"))
     -- local safeLateUpdateMethod = gimmickStatueBehavior:get_method("lateUpdate")
 
@@ -217,11 +215,11 @@ function Items.SetupStatueUIHook()
     --         end)
     --     end
     -- end)
-end
+-- end
 
 -- Is this even needed by anything in RE7?
 -- -------------------------
-function Items.SetupSafeUIHook()
+-- function Items.SetupSafeUIHook()
     -- local gimmickSafeBoxBehavior = sdk.find_type_definition(sdk.game_namespace("gui.GimmickSafeBoxDialBehavior"))
     -- local safeLateUpdateMethod = gimmickSafeBoxBehavior:get_method("CheckInput")
 
@@ -248,7 +246,7 @@ function Items.SetupSafeUIHook()
     --         compDialSettings:call("TransmitCorrectAnswer", compGimmickGUI)
     --     end
     -- end)
-end
+-- end
 
 -- this was a test to swap items to a different visual item. might not work anymore.
 -- function Items.SwapAllItemsTo(item_name)
