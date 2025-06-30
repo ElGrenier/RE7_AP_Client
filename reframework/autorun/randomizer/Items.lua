@@ -33,6 +33,11 @@ end
 --     end)
 -- end
 
+local skip_chap_2_item_name = "InteractSendFsm"
+-- local skip_chap_2_parent_object =
+local skip_chap_2_folder_path = "Chapter/Chapter1/Outside/c01_Outside03/c01_Outside03_sm"
+
+
 
 function Items._Round(number)
     return math.modf(number) -- put only the first digit
@@ -79,7 +84,7 @@ function Items.SetupInteractHook()
                 end
 
                 Typewriters.Unlock("", item_folder_path)
-                Storage.UpdateLastSavedItems()
+                -- Storage.UpdateLastSavedItems() -- Now that i check all the time if the game is ACTUALLY saving, i don't have to rely on the player to save
             elseif item_transform_parent then
                 item_parent = sdk.to_managed_object(item_transform_parent:call('get_GameObject()'))
                 item_parent_name = item_parent:call("get_Name()")
@@ -111,8 +116,6 @@ function Items.SetupInteractHook()
             location_to_check['folder_path'] = item_folder_path
             location_to_check['item_position'] = item_position_path or ""
 
-
-
             -- If we're interacting with the victory location, send victory and bail
             if Archipelago.CheckForVictoryLocation(location_to_check) then
                 Archipelago.SendLocationCheck(location_to_check)
@@ -121,7 +124,6 @@ function Items.SetupInteractHook()
                 return
             end
 
-        
             local isLocationRandomized = Archipelago.IsLocationRandomized(location_to_check)
             log.debug("DEBUG : Try checking if item is an location to get/send")
 
@@ -134,14 +136,18 @@ function Items.SetupInteractHook()
                     item_positions:set_field("ItemStackNum", 0) 
                     
                     log.debug("DEBUG : Try to remove the object from the world")
+                elseif skip_chap_2_item_name == item_name and skip_chap_2_folder_path == item_folder_path then
+                    local gameManager = Scene.getGameManager()
+                    gameManager:call("chapterJumpRequest(System.String, System.Boolean, System.String)", "Chapter3_Start", false, "")
                 end
+
             end
         end
     end)
 end
 
 
--- This is always broken with a new game, lol -- Is this even needed ? I don't see the use ?
+-- This is always broken with a new game, lol -- It is needed, but dunno how to reuse it
 -- --------------------
 -- function Items.SetupDisconnectWaitHook()
     -- local guiNewInventoryTypeDef = sdk.find_type_definition(sdk.game_namespace("gui.NewInventoryBehavior"))
