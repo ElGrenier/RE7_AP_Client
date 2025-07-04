@@ -207,15 +207,37 @@ function Typewriters.DisplayWarpMenu()
     --     saveDataManager:call("folderLoadRequest(via.Folder, System.Boolean)", newFolder, false)
     -- end
     -- end
-        if imgui.button("Start Chapter 2") then
-            local gameManager = Scene.getGameManager()
-            gameManager:call("chapterJumpRequest(System.String, System.Boolean, System.String)", "Chapter3_Start", false, "")
-        end
+        -- if imgui.button("Start Chapter 2") then
+        --     local gameManager = Scene.getGameManager()
+        --     gameManager:call("chapterJumpRequest(System.String, System.Boolean, System.String)", "Chapter3_Start", false, "")
+        -- end
 
         if imgui.button("Itembox") then
             ItemBox.AddItem("UnlimitedAmmo", 1)
         end
 
+    -- if imgui.button("Add Inventory Item") then
+    --     local inventoryMenuDef = sdk.find_type_definition(sdk.game_namespace("InventoryMenu"))
+    --     local inventoryDef = sdk.find_type_definition(sdk.game_namespace("Inventory"))
+
+    --     local createItemInstanceMethod = inventoryMenuDef:call("createItemInstance(System.String, System.Int32, app.WeaponGun.WeaponGunSaveData)", "UnlimitedAmmo", 1, nil)
+    --     -- local createItemInstance = createItemInstanceMethod:call("UnlimitedAmmo", 1, nil)
+
+    --     if createItemInstanceMethod == nil then
+    --         print("[ERROR] createItemInstance returned nil")
+    --         return
+    --     end
+
+    --     local itemComponent = createItemInstance:call("getComponent(System.Type)", sdk.typeof("app.Item"))
+        
+    --     if itemComponent == nil then
+    --         print("[ERROR] Failed to extract app.Item from GameObject")
+    --         return
+    --     end
+
+    --     local addItemMethod = inventoryDef:get_method("addItem(app.Item, via.GameObject)")
+    --     addItemMethod:call(nil, itemComponent, createItemInstance)
+    -- end
 
 
 

@@ -62,9 +62,9 @@ function Items.SetupInteractHook()
         posy, posydec = Items._Round(pos.y)
         posz, poszdec = Items._Round(pos.z)
         item_position_path = { posx, posy, posz }
-        log.debug(item_name)
-        log.debug(tostring(item_folder))
-        log.debug("Item Position", "[" .. tostring(table.concat(item_position_path, ",")) .. "]")
+        -- log.debug(item_name)
+        -- log.debug(tostring(item_folder))
+        -- log.debug("Item Position", "[" .. tostring(table.concat(item_position_path, ",")) .. "]")
 
         item_folder_path = nil
         item_parent_name = nil
@@ -117,13 +117,24 @@ function Items.SetupInteractHook()
             location_to_check['item_position'] = item_position_path or ""
 
             -- If we're interacting with the victory location, send victory and bail
-            if Archipelago.CheckForVictoryLocation(location_to_check) then
-                Archipelago.SendLocationCheck(location_to_check)
-                GUI.AddText("Goal Completed!")
+            -- if Archipelago.CheckForVictoryLocation(location_to_check) then
+            --     Archipelago.SendLocationCheck(location_to_check)
+            --     GUI.AddText("Goal Completed!")
 
-                return
+            --     return
+            -- end
+            log.debug("test")
+            log.debug(item_name)
+            log.debug(skip_chap_2_item_name)
+            log.debug(item_folder_path)
+            log.debug(skip_chap_2_folder_path)
+            if item_name == skip_chap_2_item_name and item_folder_path == skip_chap_2_folder_path then
+                log.debug("DEBUG : Tried Skipping to Chap 2")
+                local gameManager = Scene.getGameManager()
+                gameManager:call("chapterJumpRequest(System.String, System.Boolean, System.String)", "Chapter3_Start", false, "")
             end
 
+    
             local isLocationRandomized = Archipelago.IsLocationRandomized(location_to_check)
             log.debug("DEBUG : Try checking if item is an location to get/send")
 
@@ -136,11 +147,7 @@ function Items.SetupInteractHook()
                     item_positions:set_field("ItemStackNum", 0) 
                     
                     log.debug("DEBUG : Try to remove the object from the world")
-                elseif skip_chap_2_item_name == item_name and skip_chap_2_folder_path == item_folder_path then
-                    local gameManager = Scene.getGameManager()
-                    gameManager:call("chapterJumpRequest(System.String, System.Boolean, System.String)", "Chapter3_Start", false, "")
                 end
-
             end
         end
     end)
