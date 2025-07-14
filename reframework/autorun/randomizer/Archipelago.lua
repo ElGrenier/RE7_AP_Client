@@ -638,7 +638,6 @@ function Archipelago._GetLocationFromLocationData(location_data, include_sent_lo
     
     translated_location['id'] = AP_REF.APClient:get_location_id(translated_location['name'], player['game'])
 
-
     -- now that we have name and id, return them
     return translated_location
 end

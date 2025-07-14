@@ -11,6 +11,8 @@ function Items.Init()
     end
 end
 
+
+
 -- local interactType = sdk.find_type_definition(sdk.game_namespace("InteractObjectBase"))
 
 -- if interactType then
@@ -34,9 +36,20 @@ end
 -- end
 
 local skip_chap_2_item_name = "InteractSendFsm"
--- local skip_chap_2_parent_object =
 local skip_chap_2_folder_path = "Chapter/Chapter1/Outside/c01_Outside03/c01_Outside03_sm"
 
+local knife_item_name = "InteractWeapon"
+local knife_parent_name = "wp1190_Knife_Get"
+local knife_folder_path = "Chapter/Chapter3/ItemSet_c03/MainHouse_West/Common/KeyItem"
+
+
+local g17_item_name = "InteractWeapon"
+local g17_parent_name = "wp1210_Handgun_Get"
+local g17_folder_path = "Chapter/Chapter3/Event_c03/Event_c03_1/evProps"
+
+local snd_g17_item_name = "InteractWeapon"
+local snd_g17_parent_name = "wp1210_Handgun_Get"
+local snd_g17_folder_path = "Chapter/Chapter3/ItemSet_c03/MainHouse_West/Common/KeyItem"
 
 
 function Items._Round(number)
@@ -57,11 +70,14 @@ function Items.SetupInteractHook()
         item_name = feedbackParent:call("get_Name()")
         item_folder = feedbackParent:call("get_Folder()")
         transform = feedbackParent:call("get_Transform()") 
-        pos = transform:call("get_Position()")
-        posx, posxdec = Items._Round(pos.x)
-        posy, posydec = Items._Round(pos.y)
-        posz, poszdec = Items._Round(pos.z)
+        pos = feedbackParent:call("get_Transform"):call("get_Parent()"):call("get_Position()")
+        posx = pos.x
+        posy = pos.y
+        posz = pos.z
         item_position_path = { posx, posy, posz }
+
+
+
         -- log.debug(item_name)
         -- log.debug(tostring(item_folder))
         -- log.debug("Item Position", "[" .. tostring(table.concat(item_position_path, ",")) .. "]")
@@ -92,7 +108,7 @@ function Items.SetupInteractHook()
 
                 if not item_name or not item_folder_path or not item_positions then
                     item_parent_name = "" -- unset so we know it's a non-standard item location
-                end                
+                end
             end
         end
 
@@ -123,16 +139,27 @@ function Items.SetupInteractHook()
 
             --     return
             -- end
-            log.debug("test")
-            log.debug(item_name)
-            log.debug(skip_chap_2_item_name)
-            log.debug(item_folder_path)
-            log.debug(skip_chap_2_folder_path)
+
+            -- Special item condition here
             if item_name == skip_chap_2_item_name and item_folder_path == skip_chap_2_folder_path then
-                log.debug("DEBUG : Tried Skipping to Chap 2")
+                log.debug("DEBUG : Trying Skipping to Chap 2")
                 local gameManager = Scene.getGameManager()
                 gameManager:call("chapterJumpRequest(System.String, System.Boolean, System.String)", "Chapter3_Start", false, "")
+
+            elseif item_name == knife_item_name and item_folder_path == knife_folder_path and item_parent_name == knife_parent_name then
+                log.debug("DEBUG : Trying to remove knife from Inventory")
+                Inventory.RemoveItem("Knife")
+            
+            elseif item_name == g17_item_name and item_folder_path == g17_folder_path and item_parent_name == g17_parent_name then
+                log.debug("DEBUG : Trying to remove the G17 from Inventory")
+                Inventory.RemoveItem("Handgun_G17")
+                Inventory.removed_gun = false
+
+            elseif item_name == snd_g17_item_name and item_folder_path == snd_g17_folder_path and item_parent_name == snd_g17_parent_name then
+                log.debug("DEBUG : Trying to remove the snd G17 from Inventory")
+                Inventory.cinematic_removed_gun = false
             end
+
 
     
             local isLocationRandomized = Archipelago.IsLocationRandomized(location_to_check)

@@ -1,41 +1,7 @@
 local Typewriters = {}
 Typewriters.unlocked_typewriters = {}
 
--- local function get_localplayer()
---     return sdk.get_managed_singleton("app.ObjectManager"):get_field("PlayerObj")
--- end
 
--- local known_typeofs = {}
--- function get_component(game_object, type_name)
---     local t = known_typeofs[type_name] or sdk.typeof(type_name)
---     known_typeofs[type_name] = t
---     return game_object:call("getComponent(System.Type)", t)
--- end
-
--- local function teleportPlayer(pos)
---     local player = get_localplayer()
---     local controller = get_component(player, "via.physics.CharacterController")
---     controller:call("warp")
---     player:get_Transform():set_Position(pos)
---     controller:call("warp")
--- end
-
-
--- function Typewriters.AddUnlockedText(name, item_folder_path, no_save_warning)
---     if #Lookups.typewriters == 0 then -- no typewriters, no typewriters to unlock
---         return
---     end
---     local typewriterText = name
-
---     if #typewriterText == 0 then
---         for t, typewriter in pairs(Lookups.typewriters) do
---             if typewriter["folder_path"] == item_folder_path then
---                 typewriterText = typewriter["name"]
---                 break
---             end
---         end
---     end
--- end
 
 -- Allowing specifying either the readable name or the item name, so both AP options and Item interaction can unlock
 function Typewriters.Unlock(name, item_folder_path)
@@ -173,73 +139,10 @@ function Typewriters.DisplayWarpMenu()
         Typewriters.UnlockAll()
     end
 
-    -- imgui.new_line()
-    -- if imgui.button("RESET CAMERA") then
-    --     local gameMaster = Scene.getGameMaster()
-    --     local cameraManager = Helpers.component(gameMaster, "CameraManager")
-    --     local playerCamera = cameraManager:call("get_playerCamera()")
-    --     local mainCamera = cameraManager:call("get_mainCamera()")
-
-    --     -- cameraManager:call("set_mainCamera(via.Camera)",playerCamera)
-    --     cameraManager:call("forceSetCamera(via.Camera)",playerCamera)
-    -- end
-    -- imgui.new_line()
-    -- if imgui.button("bug fix") then
-    --     local sceneLocal = sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), sdk.find_type_definition("via.SceneManager"), "get_CurrentScene()")
-    --     local oldFolder = sceneLocal:findFolder("Chapter/Chapter3")
-    --     local gameManager = Scene.getGameManager()
-    --     gameManager:call("deactivateFolder(via.Folder, System.Boolean)", oldFolder, false)
-    -- end
-    -- imgui.new_line()
-    -- if imgui.button("RESET CAMERA") then
-    --     local gameMaster = Scene.getGameMaster()
-    --     local chapterLoadTempManager = Helpers.component(gameMaster, "ChapterLoadTempManager")
-
-        -- cameraManager:call("set_mainCamera(via.Camera)",playerCamera)
-        -- chapterLoadTempManager:call("forceSetCamera(via.Camera)",playerCamera)
-    -- end
-    -- if imgui.button("LoadFolder") then
-    --     -- local gameMaster = Scene.getGameMaster()
-    --     -- local saveDataManager = Helpers.component(gameMaster, "SaveDataManager")
-    --     local test = sceneLocal:findFolder("Chapter/Chapter3")
-    --     saveDataManager:call("folderClear(via.Folder)", test)
-    --     gameManager:call("deactivateFolder(via.Folder, System.Boolean)", test, false)
-    --     saveDataManager:call("folderLoadRequest(via.Folder, System.Boolean)", newFolder, false)
-    -- end
-    -- end
-        -- if imgui.button("Start Chapter 2") then
-        --     local gameManager = Scene.getGameManager()
-        --     gameManager:call("chapterJumpRequest(System.String, System.Boolean, System.String)", "Chapter3_Start", false, "")
-        -- end
-
-        if imgui.button("Itembox") then
-            ItemBox.AddItem("UnlimitedAmmo", 1)
-        end
-
-    -- if imgui.button("Add Inventory Item") then
-    --     local inventoryMenuDef = sdk.find_type_definition(sdk.game_namespace("InventoryMenu"))
-    --     local inventoryDef = sdk.find_type_definition(sdk.game_namespace("Inventory"))
-
-    --     local createItemInstanceMethod = inventoryMenuDef:call("createItemInstance(System.String, System.Int32, app.WeaponGun.WeaponGunSaveData)", "UnlimitedAmmo", 1, nil)
-    --     -- local createItemInstance = createItemInstanceMethod:call("UnlimitedAmmo", 1, nil)
-
-    --     if createItemInstanceMethod == nil then
-    --         print("[ERROR] createItemInstance returned nil")
-    --         return
-    --     end
-
-    --     local itemComponent = createItemInstance:call("getComponent(System.Type)", sdk.typeof("app.Item"))
-        
-    --     if itemComponent == nil then
-    --         print("[ERROR] Failed to extract app.Item from GameObject")
-    --         return
-    --     end
-
-    --     local addItemMethod = inventoryDef:get_method("addItem(app.Item, via.GameObject)")
-    --     addItemMethod:call(nil, itemComponent, createItemInstance)
-    -- end
-
-
+    if imgui.button("Give Debug Items") then
+        ItemBox.AddItem("UnlimitedAmmo", 1)
+        ItemBox.AddItem("AlphaGrass", 1)
+    end
 
     imgui.pop_font()
     imgui.end_window()

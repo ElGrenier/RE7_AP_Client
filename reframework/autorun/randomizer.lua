@@ -29,7 +29,7 @@ Typewriters = require("randomizer/Typewriters")
 Tools = require("randomizer/Tools")
 -- END globals
 
-Lookups.Load("Ethan", "a" ,"normal")
+Lookups.Load("normal")
 
 
 -- For debugging / trying out functionality:
@@ -46,6 +46,27 @@ re.on_pre_application_entry("UpdateBehavior", function()
         Items.Init()
         DestroyObjects.Init()
         StartingWeapon.Init()
+
+        -- If the game is saving (detected by "get_NowSaving()"), update the storage to the last received items
+        local gameMaster = Scene.getGameMaster()
+        local saveDataManager = Helpers.component(gameMaster, "SaveDataManager")
+        local isSaving = saveDataManager:call("get_NowSaving()")
+        if isSaving then
+            Storage.UpdateLastSavedItems()
+        end
+
+        if Inventory.removed_gun == false and Inventory.GetHandRightItem() == 7 then
+            Inventory.RemoveMainhandItem()
+            Inventory.removed_gun = true
+        end
+
+        if Inventory.GetHandRightItem() == 7 and Inventory.cinematic_removed_gun == false and Player.GetYPosition() == 1.48 then
+            Inventory.RemoveMainhandItem()
+            Inventory.RemoveItem("Handgun_G17")
+            Inventory.cinematic_removed_gun = true
+            log.debug("Tried removing Handgun AFTER cinematic")
+        end
+
 
         if Archipelago.waitingForSync then
             Archipelago.waitingForSync = false
