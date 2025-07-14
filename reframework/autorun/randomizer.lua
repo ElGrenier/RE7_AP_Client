@@ -68,6 +68,12 @@ re.on_pre_application_entry("UpdateBehavior", function()
             log.debug("Tried removing Handgun AFTER cinematic")
         end
 
+        if Inventory.GetHandRightItem() == 16 and Inventory.removed_grenade_launcher == false then
+            Inventory.RemoveSpecialMainhandItem()
+            Inventory.removed_grenade_launcher = true
+            log.debug("Tried removing Handgun AFTER cinematic")
+        end
+    
 
         if Archipelago.waitingForSync then
             Archipelago.waitingForSync = false
