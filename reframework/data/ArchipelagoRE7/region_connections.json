@@ -21,11 +21,6 @@
     },
     { 
         "from": "Dining Area",
-        "to": "Dad Cinematic",
-        "condition": {}
-    },
-    { 
-        "from": "Dining Area",
         "to": "Kitchen",
         "condition": {}
     },
@@ -68,7 +63,7 @@
     },
     { 
         "from": "Recreation Room",
-        "to": "Grandma's Room",
+        "to": "Grandma Room",
         "condition": {
 	"items": ["Scorpion Key"]	
         }
@@ -257,12 +252,21 @@
         "from": "Yard",
         "to": "Testing Area",
         "condition": {
-            "items": ["Keycard - Blue","Keycard - Red"]
+            "items": ["Keycard (Blue)","Keycard (Red)"]
         }
     },
     { 
         "from": "Testing Area",
-        "to": "Victory Zone",
-        "condition": {}
+        "to": "Boat House",
+        "condition": {
+	   "items": ["Crank"]
+	}
+    },
+    { 
+        "from": "Boat House",
+        "to": "Dad Bossroom",
+        "condition": {
+	   "items": ["D-Series Arm","D-Series Head"]
+	}
     }
 ]

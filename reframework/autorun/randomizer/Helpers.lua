@@ -28,4 +28,10 @@ function Helpers.wait(seconds)
     repeat until os.time() > start + seconds 
 end
 
+function Helpers.Round(number)
+	return math.ceil(number * 100) / 100 -- two decimal places
+end
+
+
+
 return Helpers

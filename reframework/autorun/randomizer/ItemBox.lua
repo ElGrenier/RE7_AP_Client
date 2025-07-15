@@ -2,19 +2,8 @@ local ItemBox = {}
 
 
 function ItemBox.GetAnyAvailable()
-	return true
-	-- local gameManager = Scene.getGameManager()
-	-- local currentChapter = gameManager:call("get_CurrentChapter()")
-	-- if currentChapter ~= 4 then
-	-- 	return true
-	-- else
-	-- 	return nil
-	-- end
+    return true
 end
-
-
-
-
 
 -- function ItemBox.GetAnyAvailable()
 --     --local scene = Scene.getSceneObject()
@@ -35,36 +24,13 @@ end
 --     return nil
 -- 
 
-local function get_localplayer()
-	local object_man = sdk.get_managed_singleton("app.ObjectManager")
-
-	if not object_man then
-		return nil
-	end
-
-	return object_man:get_field("PlayerObj")
-end
-
-local known_typeofs = {}
-local function get_component(game_object, type_name)
-	local t = known_typeofs[type_name] or sdk.typeof(type_name)
-
-	if t == nil then
-		return nil
-	end
-
-	known_typeofs[type_name] = t
-	return game_object:call("getComponent(System.Type)", t)
-end
-
-
-
 function ItemBox.AddItem(itemId, count)
-	local inventory = get_component(get_localplayer(), "app.Inventory") or re.msg("Inventory nil")
-	local itemBoxData = inventory:get_field("<ItemBoxData>k__BackingField")
+	local inventory = Inventory.GetInventory()
+	local itemBoxData = inventory:get_field("<ItemBoxData>k__BackingField") or re.msg("itemBoxData nil")
 	
-	local signature = "addItem(System.String, System.Int32, app.WeaponGun.WeaponGunSaveData)"
-	itemBoxData:call(signature, itemId, count, nil)
+	log.debug(tostring(itemId))
+	log.debug(count)
+	itemBoxData:call("addItem(System.String, System.Int32, app.WeaponGun.WeaponGunSaveData)", itemId, count, nil)
     return
 end
 

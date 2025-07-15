@@ -397,7 +397,7 @@ function Archipelago.SendLocationCheck(location_data) -- so it reuse the info us
 
     location_ids[1] = location["id"]
 
-    local result = AP_REF.APClient.LocationChecks(AP_REF.APClient, location_ids) -- What was its use ???
+    local result = AP_REF.APClient.LocationChecks(AP_REF.APClient, location_ids) -- Send an location check (even if "result" is not used anywhere)
     local sent_loc = location['raw_data']    
 
     for k, loc in pairs(Lookups.locations) do
@@ -433,7 +433,7 @@ function Archipelago.SendDeathLink() --Process Deathlink (obviously)
 
     local deathLinkData = {
         time = timeOfDeath,
-        cause = playerName .. " hugged a zombie.",
+        cause = playerName .. " got smashed by a molded.",
         source = playerName
     }
 
@@ -466,18 +466,12 @@ function Archipelago.ReceiveItem(item_name, sender, is_randomized) -- Process re
     end
 
     if item_ref and item_number then
-        local itemId, weaponId, bulletId, count = nil
+        local itemId, bulletId, count = nil
+        itemId = item_number
 
-        if item_ref.type == "Weapon" or item_ref.type == "Subweapon" then
-            itemId = -1
-            weaponId = item_number
 
-            if item_ref.type == "Weapon" then
-                bulletId = item_ammo
-            end
-        else
-            itemId = item_number
-            weaponId = -1
+        if item_ref.type == "Weapon" then
+            bulletId = item_ammo
         end
 
         count = item_ref.count
@@ -567,11 +561,7 @@ local function TablesEqual(t1, t2)
 end
 
 
-
-
-
 function Archipelago._GetLocationFromLocationData(location_data, include_sent_locations) -- This is what is hell like
-    log.debug("DEBUG : Tried to Get Location From Location Data")
     local player = Archipelago.GetPlayer()
 
     include_sent_locations = include_sent_locations or false -- Set to true by some function above
@@ -627,7 +617,6 @@ function Archipelago._GetLocationFromLocationData(location_data, include_sent_lo
                     break
 
                 elseif TablesEqual(loc['item_position'], location_data['item_position']) and loc['parent_object'] == nil then
-                    log.debug("ItemPositionChecked ELSEIF")
                     translated_location['name'] = loc['region'] .. " - " .. loc['name']
                     translated_location['raw_data'] = loc
                     break

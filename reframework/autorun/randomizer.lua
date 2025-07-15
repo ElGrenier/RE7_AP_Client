@@ -21,7 +21,6 @@ Helpers = require("randomizer/Helpers")
 Inventory = require("randomizer/Inventory")
 ItemBox = require("randomizer/ItemBox")
 Items = require("randomizer/Items")
-Logging = require("randomizer/Logging")
 Player = require("randomizer/Player")
 Scene = require("randomizer/Scene")
 StartingWeapon = require("randomizer/StartingWeapon")
@@ -31,7 +30,7 @@ Tools = require("randomizer/Tools")
 -- END globals
 
 Lookups.Load("normal")
-Logging.Init()
+
 
 -- For debugging / trying out functionality:
 -- Player.GetInventorySlots()
@@ -69,11 +68,10 @@ re.on_pre_application_entry("UpdateBehavior", function()
         end
 
         if Inventory.GetHandRightItem() == 16 and Inventory.removed_grenade_launcher == false then
-            Inventory.RemoveSpecialMainhandItem()
             Inventory.removed_grenade_launcher = true
-            log.debug("Tried removing Handgun AFTER cinematic")
+            Inventory.RemoveMainhandItem()
+            log.debug("Tried removing Grenade Launcher")
         end
-    
 
         if Archipelago.waitingForSync then
             Archipelago.waitingForSync = false
@@ -141,4 +139,3 @@ re.on_draw_ui(function () -- this is only called when Script Generated UI is vis
 end)
 
 log.debug("[Randomizer] Mod loaded.")
-

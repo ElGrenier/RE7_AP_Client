@@ -67,10 +67,10 @@ function Typewriters.DisplayWarpMenu()
 
                 local posv3 = ValueType.new(sdk.find_type_definition("via.vec3"))
                 posv3:call(".ctor(System.Single, System.Single, System.Single)", pos[1], pos[2], pos[3])
-                log.debug("posv3")
-                log.debug(posv3.x)
-                log.debug(posv3.y)
-                log.debug(posv3.z)
+                -- log.debug("posv3")
+                -- log.debug(posv3.x)
+                -- log.debug(posv3.y)
+                -- log.debug(posv3.z)
 
 
 
@@ -142,6 +142,26 @@ function Typewriters.DisplayWarpMenu()
     if imgui.button("Give Debug Items") then
         ItemBox.AddItem("UnlimitedAmmo", 1)
         ItemBox.AddItem("AlphaGrass", 1)
+    end
+
+    if imgui.button("Add Inventory Item") then
+        local itemId = "UnlimitedAmmo"
+        local quantity = 1
+
+    -- Add to item box
+    inventory = Inventory.GetInventory()
+    local itemBoxData = inventory:get_field("<ItemBoxData>k__BackingField")
+    itemBoxData:addItem(itemId, quantity, nil)
+
+    -- Move to inventory
+    if not inventoryMenu then return end
+    local itemParam = itemBoxData:findItem(itemId)
+    inventoryMenu:moveItemBoxToInventory(itemParam, quantity)
+    end
+
+
+    if imgui.button("Test") then
+        Inventory.AddItemtoInventory()
     end
 
     imgui.pop_font()

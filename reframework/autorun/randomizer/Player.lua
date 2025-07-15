@@ -30,11 +30,7 @@ function Player.Kill()
     end
 end
 
-local function _Round(number)
-    return math.ceil(number * 100) / 100 -- two decimal places
-end
-
-local function get_localplayer()
+function Player.GetLocalPlayer()
     local object_man = sdk.get_managed_singleton("app.ObjectManager")
 
     if not object_man then
@@ -44,14 +40,13 @@ local function get_localplayer()
 end
 
 function Player.GetYPosition()
-    local player_object = get_localplayer()
+    local player_object = Player.GetLocalPlayer()
     local player_transform = player_object:call("get_Transform")
     player_position = player_transform:call("get_LocalPosition")
-    log.debug(_Round(player_position.x))
-    log.debug(_Round(player_position.y))
-    log.debug(_Round(player_position.z))
-    output = _Round(player_position.y)
-    return output
+    -- log.debug(Helpers.Round(player_position.x))
+    -- log.debug(Helpers.Round(player_position.y))
+    -- log.debug(Helpers.Round(player_position.z))
+    return Helpers.Round(player_position.y)
 end
 
 return Player

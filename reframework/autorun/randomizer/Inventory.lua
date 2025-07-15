@@ -1,15 +1,5 @@
 local Inventory = {}
 
-local function get_localplayer()
-    local object_man = sdk.get_managed_singleton("app.ObjectManager")
-
-    if not object_man then
-        return nil
-    end
-
-    return object_man:get_field("PlayerObj")
-end
-
 local known_typeofs = {}
 local function get_component(game_object, type_name)
     local t = known_typeofs[type_name] or sdk.typeof(type_name)
@@ -22,8 +12,13 @@ local function get_component(game_object, type_name)
     return game_object:call("getComponent(System.Type)", t)
 end
 
+function Inventory.GetInventory()
+    return get_component(Player.GetLocalPlayer(), "app.Inventory") or log.debug("Inventory nil !")
+end
+
+
 function Inventory.RemoveItem(itemId)
-    local inventory = get_component(get_localplayer(), "app.Inventory")
+    local inventory = get_component(Player.GetLocalPlayer(), "app.Inventory")
     local item_list = inventory:get_field("_ItemList")
     local count = item_list:call("get_Count")
     local real_count = count - 1 -- So its the same as the index value
@@ -34,9 +29,7 @@ function Inventory.RemoveItem(itemId)
         local Item_name = Item_test:get_field("_ItemData"):get_field("ItemDataID")
 
         if Item_name == itemId then
-            inventory:call("removeEquip()")
             inventory:call("removeItem(app.Item)", Item_test)
-            inventory:call("removeEquip()")
         end
     end
 end
@@ -52,7 +45,7 @@ function Inventory.RemoveMainhandItem()
 
     -- Étape 5 : appel de méthode sur equipManager
     equipManager:call("equipWeapon(app.WeaponID, app.CharacterDefine.Hand)", 0, 0)
-    log.debug("Removed Main Hand Item")
+    log.debug("Trying to remove the Equiped Item")
 end
 
 
@@ -69,6 +62,41 @@ function Inventory.GetHandRightItem()
     -- log.debug(test)
     return test
 end
+
+-- function Inventory.AddItemtoInventory()
+--     local item_manager = sdk.get_managed_singleton("app.ItemManager")
+
+--     local inventoryMenuDef = sdk.find_type_definition(sdk.game_namespace("InventoryMenu"))
+--     local inventoryDef = sdk.find_type_definition(sdk.game_namespace("Inventory"))
+
+--     -- Méthode statique ou non ? Si c’est une méthode statique :
+--     local createItemInstanceMethod = inventoryMenuDef:get_method("createItemInstance(System.String, System.Int32, app.WeaponGun.WeaponGunSaveData)")
+--     local createItemInstance = createItemInstanceMethod:call("Unlimited Ammo", 1, nil)
+
+--     -- Extraire le composant app.Item depuis le GameObject
+--     local itemComponent = createItemInstanceMethod:call("getComponent(System.Type)", sdk.typeof("app.Item"))
+
+--     -- Pareil pour addItem
+--     local addItemMethod = inventoryDef:get_method("addItem(app.Item, via.GameObject)")
+--     addItemMethod:call(itemComponent, createItemInstance)
+
+
+
+
+
+--     item_manager:call("createItemInstance(via.GameObject, System.String)",Player.GetLocalPlayer, "UnlimitedAmmo")
+
+
+
+
+
+
+
+
+-- end
+
+
+
 
 -- function Inventory.GetInventoryManager()
 --     return sdk.find_type_definition("app.InventoryManager")

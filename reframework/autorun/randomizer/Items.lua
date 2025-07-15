@@ -35,6 +35,9 @@ end
 --     end)
 -- end
 
+
+-- List of "hardcodded" item test (to remove them from inventory, and skip to chapter 2)
+
 local skip_chap_2_item_name = "InteractSendFsm"
 local skip_chap_2_folder_path = "Chapter/Chapter1/Outside/c01_Outside03/c01_Outside03_sm"
 
@@ -51,10 +54,9 @@ local snd_g17_item_name = "InteractWeapon"
 local snd_g17_parent_name = "wp1210_Handgun_Get"
 local snd_g17_folder_path = "Chapter/Chapter3/ItemSet_c03/MainHouse_West/Common/KeyItem"
 
-
-function Items._Round(number)
-    return math.modf(number) -- put only the first digit
-end
+local grenade_launcher_item_name = "InteractWeapon"
+local grenade_launcher_parent_name = "wp1110_PortableCannon_Get"
+local grenade_launcher_folder_path = "Chapter/Chapter3/ItemSet_c03/MainHouse_East/Normal/KeyItem"
 
 
 function Items.SetupInteractHook()
@@ -71,9 +73,9 @@ function Items.SetupInteractHook()
         item_folder = feedbackParent:call("get_Folder()")
         transform = feedbackParent:call("get_Transform()") 
         pos = feedbackParent:call("get_Transform"):call("get_Parent()"):call("get_Position()")
-        posx = pos.x
-        posy = pos.y
-        posz = pos.z
+        posx = Helpers.Round(pos.x)
+        posy = Helpers.Round(pos.y)
+        posz = Helpers.Round(pos.z)
         item_position_path = { posx, posy, posz }
 
 
@@ -158,22 +160,21 @@ function Items.SetupInteractHook()
             elseif item_name == snd_g17_item_name and item_folder_path == snd_g17_folder_path and item_parent_name == snd_g17_parent_name then
                 log.debug("DEBUG : Trying to remove the snd G17 from Inventory")
                 Inventory.cinematic_removed_gun = false
+
+            elseif item_name == grenade_launcher_item_name and item_folder_path == grenade_launcher_folder_path and item_parent_name == grenade_launcher_parent_name then
+                log.debug("DEBUG : Trying to remove the Grenade Launcher from Inventory")
+                Inventory.RemoveItem("GrenadeLauncher")
+                Inventory.removed_grenade_launcher = false
             end
-
-
     
             local isLocationRandomized = Archipelago.IsLocationRandomized(location_to_check)
-            log.debug("DEBUG : Try checking if item is an location to get/send")
 
             if Archipelago.IsItemLocation(location_to_check) and (Archipelago.SendLocationCheck(location_to_check) or Archipelago.IsConnected()) then
 
                 -- if it's an item, call vanish to get rid of it
                 if item_positions and isLocationRandomized then
-
                     -- Vanish the item
                     item_positions:set_field("ItemStackNum", 0) 
-                    
-                    log.debug("DEBUG : Try to remove the object from the world")
                 end
             end
         end
