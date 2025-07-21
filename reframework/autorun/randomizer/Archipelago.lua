@@ -465,7 +465,7 @@ function Archipelago.ReceiveItem(item_name, sender, is_randomized) -- Process re
         end
     end
 
-    if item_ref and item_number then
+    if item_ref and item_number and not Scene:isGameOver() then
         local itemId, bulletId, count = nil
         itemId = item_number
 
