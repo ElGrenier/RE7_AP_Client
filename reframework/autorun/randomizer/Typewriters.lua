@@ -148,15 +148,15 @@ function Typewriters.DisplayWarpMenu()
         local itemId = "UnlimitedAmmo"
         local quantity = 1
 
-    -- Add to item box
-    inventory = Inventory.GetInventory()
-    local itemBoxData = inventory:get_field("<ItemBoxData>k__BackingField")
-    itemBoxData:addItem(itemId, quantity, nil)
+        -- Add to item box
+        inventory = Inventory.GetInventory()
+        local itemBoxData = inventory:get_field("<ItemBoxData>k__BackingField")
+        itemBoxData:addItem(itemId, quantity, nil)
 
-    -- Move to inventory
-    if not inventoryMenu then return end
-    local itemParam = itemBoxData:findItem(itemId)
-    inventoryMenu:moveItemBoxToInventory(itemParam, quantity)
+        -- Move to inventory
+        if not inventoryMenu then return end
+        local itemParam = itemBoxData:findItem(itemId)
+        inventoryMenu:moveItemBoxToInventory(itemParam, quantity)
     end
 
 

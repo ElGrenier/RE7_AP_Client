@@ -40,10 +40,9 @@ function StartingWeapon.SwapTo(item_name)
     end
 
     if item_ref and item_number then
-        local itemId, weaponId, weaponParts, bulletId, count = nil
+        local itemId bulletId, count = nil
 
-        itemId = -1
-        weaponId = item_number
+        itemId = item_number
 
         if item_ref.type == "Weapon" then
             bulletId = item_ammo
@@ -56,7 +55,7 @@ function StartingWeapon.SwapTo(item_name)
         end
 
         -- item ids 1 and 9 are the Matilda and SLS 60, or Leon's starting weapon and Claire's starting weapon, for both scenarios
-        Inventory.SwapItem(nil, { 1, 9 }, tonumber(itemId), tonumber(weaponId), weaponParts, bulletId, tonumber(count))
+        Inventory.SwapItem(nil, { 1, 9 }, tonumber(itemId), bulletId, tonumber(count))
 
         Storage.swappedStartingWeapon = true
         GUI.AddTexts({

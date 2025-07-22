@@ -8,7 +8,7 @@ function Helpers.transform(obj)
     return obj:call("get_Transform")
 end
 
-function Helpers.component(obj, component_namespace)
+function Helpers.old_component(obj, component_namespace)
     return obj:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace(component_namespace)))
 end
 
@@ -30,6 +30,18 @@ end
 
 function Helpers.Round(number)
 	return math.ceil(number * 100) / 100 -- two decimal places
+end
+
+local known_typeofs = {}
+function Helpers.component(game_object, type_name)
+    local t = known_typeofs[type_name] or sdk.typeof(type_name)
+
+    if t == nil then
+        return nil
+    end
+
+    known_typeofs[type_name] = t
+    return game_object:call("getComponent(System.Type)", t)
 end
 
 

@@ -78,11 +78,15 @@ function Items.SetupInteractHook()
         posz = Helpers.Round(pos.z)
         item_position_path = { posx, posy, posz }
 
+        log.debug(posx)
+        log.debug(posy)
+        log.debug(posz)
 
 
-        -- log.debug(item_name)
-        -- log.debug(tostring(item_folder))
-        -- log.debug("Item Position", "[" .. tostring(table.concat(item_position_path, ",")) .. "]")
+
+        -- Logging.Log(item_name)
+        -- Logging.Log(tostring(item_folder))
+        -- Logging.Log("Item Position", "[" .. tostring(table.concat(item_position_path, ",")) .. "]")
 
         item_folder_path = nil
         item_parent_name = nil
@@ -102,7 +106,6 @@ function Items.SetupInteractHook()
                 end
 
                 Typewriters.Unlock("", item_folder_path)
-                -- Storage.UpdateLastSavedItems() -- Now that i check all the time if the game is ACTUALLY saving, i don't have to rely on the player to save
             elseif item_transform_parent then
                 item_parent = sdk.to_managed_object(item_transform_parent:call('get_GameObject()'))
                 item_parent_name = item_parent:call("get_Name()")

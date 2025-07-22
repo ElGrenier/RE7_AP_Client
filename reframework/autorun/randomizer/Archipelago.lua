@@ -110,6 +110,17 @@ function Archipelago.SlotDataHandler(slot_data)
     end
 end
 
+function Archipelago.CanReceiveItems()
+    -- wait until the player is in game, with AP connected, and with an available item box (that's not in use) -- and is not dead (because it will just spam the item received)
+    -- before sending any items over
+    return Scene.isInGame() and Archipelago.IsConnected() and not Scene.isUsingItemBox() and ItemBox.GetAnyAvailable() and not Scene.isGameOver()
+end
+
+function Archipelago.CanBeKilled()
+    -- wait until the player is in game, with AP connected, before attempting to kill them from a deathlink
+    return Scene.isInGame() and Archipelago.IsConnected()
+end
+
 -- sent by server when items are received
 function APItemsReceivedHandler(items_received)
     return Archipelago.ItemsReceivedHandler(items_received)
@@ -121,6 +132,11 @@ function Archipelago.ItemsReceivedHandler(items_received)
 
     -- add all of the randomized items to an item queue to wait for send
     for k, row in pairs(items_received) do
+        Logging.Log("Item Received Handler :")
+        Logging.Log("Item Received with index")
+        Logging.Log(row["index"])
+        Logging.Log("Last index saved :")
+        Logging.Log(Storage.lastSavedItemIndex)
         -- if the index of the incoming item is greater than the index of our last item at save, check to see if it's randomized
         -- because ONLY non-randomized items escape the queue; everything else gets queued
         if row["index"] ~= nil and (not Storage.lastSavedItemIndex or row["index"] > Storage.lastSavedItemIndex) then
@@ -136,6 +152,7 @@ function Archipelago.ItemsReceivedHandler(items_received)
                 end
             end
             if item_data["name"] and row["player"] ~= nil and is_randomized == 0 then
+                Logging.Log("ReceiveItemStarted")
                 Archipelago.ReceiveItem(item_data["name"], row["player"], is_randomized)
             else
                 table.insert(Archipelago.itemsQueue, row)
@@ -150,17 +167,6 @@ function Archipelago.ItemsReceivedHandler(items_received)
             { message=table.concat(itemsWaiting, ", "), color=AP_REF.HexToImguiColor("AAAAAA") }
         })   
     end
-end
-
-function Archipelago.CanReceiveItems()
-    -- wait until the player is in game, with AP connected, and with an available item box (that's not in use)
-    -- before sending any items over
-    return Scene.isInGame() and Archipelago.IsConnected() and not Scene.isUsingItemBox() and ItemBox.GetAnyAvailable()
-end
-
-function Archipelago.CanBeKilled()
-    -- wait until the player is in game, with AP connected, before attempting to kill them from a deathlink
-    return Scene.isInGame() and Archipelago.IsConnected()
 end
 
 function Archipelago.ProcessItemsQueue()
@@ -179,6 +185,14 @@ function Archipelago.ProcessItemsQueue()
     Archipelago.itemsQueue = {}
 
     for k, row in pairs(items) do
+        Logging.Log("ProcessItemsQueue :")
+        Logging.Log("Item Received with index")
+        Logging.Log(row["index"])
+        Logging.Log("Last index saved :")
+        Logging.Log(Storage.lastSavedItemIndex)
+
+
+
         -- if the index of the incoming item is greater than the index of our last item at save, accept it
         if row["index"] ~= nil and (not Storage.lastSavedItemIndex or row["index"] > Storage.lastSavedItemIndex) then
             local item_data = Archipelago._GetItemFromItemsData({ id = row["item"] })
@@ -278,7 +292,7 @@ function Archipelago.PrintJSONHandler(json_rows)
         -- everything else, don't care.
         if player['alias'] ~= nil and player_sender == player['alias'] then
             if not Storage.lastSavedItemIndex or row == nil or row["index"] == nil or row["index"] > Storage.lastSavedItemIndex then
-                if player_receiver then
+                if player_receiver then --if there is a receiver ? So its not activated if the receiver is ourself ?
                     item = AP_REF.APClient:get_item_name(item_id, AP_REF.APClient:get_player_game(receiver_number))
                     location = AP_REF.APClient:get_location_name(location_id, player['game'])
 
@@ -295,7 +309,7 @@ function APBouncedHandler(json_rows)
 end
 AP_REF.on_bounced = APBouncedHandler
 
-function Archipelago.BouncedHandler(json_rows) 
+function Archipelago.BouncedHandler(json_rows) -- Used to process Deathlink
     -- {
     --  "data" : {
     --      "source": "FuzzyLTTP",
@@ -329,11 +343,9 @@ function Archipelago.BouncedHandler(json_rows)
                             { message=tostring(json_rows["data"]["source"]), color="green" }
                         })
                     end
-
                     Archipelago.wasDeathLinked = true
                     Player.Kill()
                 end
-                
                 break
             end
         end
@@ -342,48 +354,38 @@ end
 
 function Archipelago.IsItemLocation(location_data) -- so it reuse the info used to summon this function in _GetLocationFromLocationData ? -- used in Items.lua
     local location = Archipelago._GetLocationFromLocationData(location_data, true) -- include_sent_locations
-
     if not location then
         return false
     end
-
     return true
 end
 
-function Archipelago.IsLocationRandomized(location_data) -- so it reuse the info used to summon this function in _GetLocationFromLocationData ? -- used in Items.lua
+function Archipelago.IsLocationRandomized(location_data) -- so it reuse the info used to summon this function in _GetLocationFromLocationData ? -- asked from Items.lua
     local location = Archipelago._GetLocationFromLocationData(location_data, true) -- include_sent_locations
-
     if not location then
         return false
     end
-    
     if location['raw_data']['randomized'] == 0 and not location['raw_data']['force_item'] then
         return false
     end
-
     return true
 end
 
 -- Never used ?? (Not in any LUA file)
 function Archipelago.GetLocationName(location_data) -- so it reuse the info used to summon this function in _GetLocationFromLocationData ? 
     local location = Archipelago._GetLocationFromLocationData(location_data, true) -- include_sent_locations
-
     if not location then
         return ""
     end
-
     return location["name"]
 end
 
 function Archipelago.CheckForVictoryLocation(location_data) -- so it reuse the info used to summon this function in _GetLocationFromLocationData ? -- Used in Items.lua
     local location = Archipelago._GetLocationFromLocationData(location_data)
-
     if location ~= nil and location["raw_data"]["victory"] then
         Archipelago.SendVictory()
-
         return true
     end
-    
     return false
 end
 
@@ -441,6 +443,7 @@ function Archipelago.SendDeathLink() --Process Deathlink (obviously)
 end
 
 function Archipelago.ReceiveItem(item_name, sender, is_randomized) -- Process receiving items (by checking the game_id in the items.json file)
+    Logging.Log("Reception item : ".. tostring(item_name))
     local item_ref = nil
     local item_number = nil
     local item_ammo = nil
@@ -464,11 +467,13 @@ function Archipelago.ReceiveItem(item_name, sender, is_randomized) -- Process re
             break
         end
     end
+    if not item_ref then
+    Logging.Log("Item inconnu dans Lookups.items : " .. tostring(item_name))
+    end
 
-    if item_ref and item_number and not Scene:isGameOver() then
+    if item_ref and item_number then
         local itemId, bulletId, count = nil
         itemId = item_number
-
 
         if item_ref.type == "Weapon" then
             bulletId = item_ammo
@@ -476,7 +481,7 @@ function Archipelago.ReceiveItem(item_name, sender, is_randomized) -- Process re
 
         count = item_ref.count
 
-        if count == nil then
+        if count == nil or count <= 0 then
             count = 1
         end
 
@@ -493,37 +498,9 @@ function Archipelago.ReceiveItem(item_name, sender, is_randomized) -- Process re
         local player_self = Archipelago.GetPlayer()
         local sentToBox = false
 
-        if is_randomized > 0 then
-    
-            -- if item_name == "Hip Pouch" then
-            --     if Inventory.GetMaxSlots() <= 18 then
-            --         Inventory.IncreaseMaxSlots(2) -- simulate receiving the hip pouch by increasing player inv slots by 2
-            --         GUI.AddReceivedItemText(item_name, item_color, tostring(AP_REF.APClient:get_player_alias(sender)), tostring(player_self.alias), sentToBox)
-            --     else
-            --         GUI.AddText("Received Hip Pouch, but inventory is at maximum size. Ignoring.")
-            --     end
-
-            --     return
-            -- end
-            
-            -- -- send 2-slot wide items to box by default
-            if 
-                item_ref.type ~= "Weapon" and item_ref.type ~= "Subweapon"
-            then
-                -- local addedToInv = Inventory.AddItem(itemId, count)
-
-                -- -- if adding to inventory failed, add it to the box as a backup
-                -- if addedToInv then
-                --     sentToBox = false
-                -- else
-                    ItemBox.AddItem(itemId, count)
-                    sentToBox = true    
-                -- end
-            -- if this item is a weapon/subweapon or the player doesn't have room in inventory, send to the box
-            else
-                ItemBox.AddItem(itemId, count)
-                sentToBox = true
-            end
+        if is_randomized > 0 then  
+            sentToBox = true
+            ItemBox.AddItem(itemId, count)
         end
 
         GUI.AddReceivedItemText(item_name, item_color, tostring(AP_REF.APClient:get_player_alias(sender)), tostring(player_self.alias), sentToBox) -- Send info to player that he received an item
@@ -551,7 +528,7 @@ function Archipelago._GetItemFromItemsData(item_data) -- dunno what its use
 end
 
 
-local function TablesEqual(t1, t2)
+function TablesEqual(t1, t2)
     if t1 == nil or t2 == nil then return false end
     if #t1 ~= #t2 then return false end
     for i = 1, #t1 do
@@ -607,16 +584,17 @@ function Archipelago._GetLocationFromLocationData(location_data, include_sent_lo
     -- Fallback: try to match location from object data if no name matched
     if not translated_location['name'] and (location_data['parent_object'] ~= nil or location_data['item_position'] ~= nil) then -- loc = An entry of location.json (it goes for every itteration to check it), location_data = the location the player has gotten
         for _, loc in pairs(Lookups.locations) do
-            
             if loc['item_object'] == location_data['item_object'] and
                loc['folder_path'] == location_data['folder_path'] then
 
                 if loc['parent_object'] == location_data['parent_object'] and loc['item_position'] == nil then
+                    log.debug("If Done")
                     translated_location['name'] = loc['region'] .. " - " .. loc['name']
                     translated_location['raw_data'] = loc
                     break
 
                 elseif TablesEqual(loc['item_position'], location_data['item_position']) and loc['parent_object'] == nil then
+                    log.debug("Elseif Done")
                     translated_location['name'] = loc['region'] .. " - " .. loc['name']
                     translated_location['raw_data'] = loc
                     break
@@ -624,7 +602,8 @@ function Archipelago._GetLocationFromLocationData(location_data, include_sent_lo
             end
         end
     end
-    
+    Logging.Log("translated location name")
+    Logging.Log(tostring(translated_location['name']))
     translated_location['id'] = AP_REF.APClient:get_location_id(translated_location['name'], player['game'])
 
     -- now that we have name and id, return them

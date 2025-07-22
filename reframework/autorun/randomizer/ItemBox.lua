@@ -25,11 +25,9 @@ end
 -- 
 
 function ItemBox.AddItem(itemId, count)
-	local inventory = Inventory.GetInventory()
-	local itemBoxData = inventory:get_field("<ItemBoxData>k__BackingField") or re.msg("itemBoxData nil")
-	
-	log.debug(tostring(itemId))
-	log.debug(count)
+	-- log.debug(tostring(itemId))
+	-- log.debug(count)
+	local itemBoxData = Inventory.GetInventory():get_field("<ItemBoxData>k__BackingField")
 	itemBoxData:call("addItem(System.String, System.Int32, app.WeaponGun.WeaponGunSaveData)", itemId, count, nil)
     return
 end

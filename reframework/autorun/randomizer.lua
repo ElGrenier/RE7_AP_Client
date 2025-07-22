@@ -14,6 +14,7 @@ AP_REF = require("AP_REF/core")
 Manifest = require("randomizer/Manifest")
 Lookups = require("randomizer/Lookups")
 
+Logging = require("randomizer/Logging")
 Archipelago = require("randomizer/Archipelago")
 DestroyObjects = require("randomizer/DestroyObjects")
 GUI = require("randomizer/GUI")
@@ -46,10 +47,11 @@ re.on_pre_application_entry("UpdateBehavior", function()
         Items.Init()
         DestroyObjects.Init()
         StartingWeapon.Init()
+        Logging.Init()
 
         -- If the game is saving (detected by "get_NowSaving()"), update the storage to the last received items
         local gameMaster = Scene.getGameMaster()
-        local saveDataManager = Helpers.component(gameMaster, "SaveDataManager")
+        local saveDataManager = Helpers.old_component(gameMaster, "SaveDataManager")
         local isSaving = saveDataManager:call("get_NowSaving()")
         if isSaving then
             Storage.UpdateLastSavedItems()

@@ -14,13 +14,13 @@ function CutsceneObjects.Init()
     end
 end
 
-function CutsceneObjects.DispersalCartridge()
-    local dispersalObject = Helpers.gameObject("sm42_222_SprayingMachine01A_control")
-    if not dispersalObject then
-        return
-    end
-    local dispersalComponent = Helpers.component(dispersalObject, "gimmick.option.AddItemToInventorySettings")
-    dispersalComponent:set_field("Enable", false)
-end
+-- function CutsceneObjects.DispersalCartridge()
+--     local dispersalObject = Helpers.gameObject("sm42_222_SprayingMachine01A_control")
+--     if not dispersalObject then
+--         return
+--     end
+--     local dispersalComponent = Helpers.component(dispersalObject, "gimmick.option.AddItemToInventorySettings")
+--     dispersalComponent:set_field("Enable", false)
+-- end
 
 return CutsceneObjects

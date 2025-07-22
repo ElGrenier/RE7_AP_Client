@@ -1,24 +1,13 @@
 local Inventory = {}
 
-local known_typeofs = {}
-local function get_component(game_object, type_name)
-    local t = known_typeofs[type_name] or sdk.typeof(type_name)
-
-    if t == nil then
-        return nil
-    end
-
-    known_typeofs[type_name] = t
-    return game_object:call("getComponent(System.Type)", t)
-end
 
 function Inventory.GetInventory()
-    return get_component(Player.GetLocalPlayer(), "app.Inventory") or log.debug("Inventory nil !")
+    return Helpers.component(Player.GetLocalPlayer(), "app.Inventory") or log.debug("Inventory nil !")
 end
 
 
 function Inventory.RemoveItem(itemId)
-    local inventory = get_component(Player.GetLocalPlayer(), "app.Inventory")
+    local inventory = Helpers.component(Player.GetLocalPlayer(), "app.Inventory")
     local item_list = inventory:get_field("_ItemList")
     local count = item_list:call("get_Count")
     local real_count = count - 1 -- So its the same as the index value
@@ -277,7 +266,7 @@ end
 --     return false
 -- end
 
--- function Inventory.SwapItem(fromItemIds, fromWeaponIds, itemId, weaponId, weaponParts, bulletId, count)
+-- function Inventory.SwapItem(fromItemIds, itemId, bulletId, count)
 --     -- local inventoryManager = Inventory.GetInventoryManager()
 --     -- local playerInventory = inventoryManager:get_CurrentInventory()
 --     -- local playerInventorySlots = playerInventory:get_field("_Slots")
