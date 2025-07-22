@@ -10,3 +10,8 @@ This project would have not been possible without Fuzzy ,Solidus Snake and many 
 - If you press the doorbell at the first chapter, it will skip you directly to chapter 2
 
 - Don't interact with thing out of scenario-Logic, (i.e, don't press the ladder button if you are not going to Lucas place for exemple), so keep yourself to the scenario as much as possible.
+
+For reminder, here is the list of scenario-check you need to do IN ORDER (OR YOU SOFT LOCK) :
+
+Chapter 2 :
+Starting Cinematic (not missable) -> Cops Cinematic -> Garage Bossfight + Cinematic -> Bathroom Cinematic -> ???(dunno if there anything between these 2) -> First Red Dog Head cinematic -> Second boss fight with Red Dog Head -> Phonecall outside
