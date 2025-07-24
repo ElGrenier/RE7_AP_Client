@@ -147,10 +147,15 @@ function Archipelago.ItemsReceivedHandler(items_received)
             if row["location"] ~= nil and row["location"] > 0 then
                 location_data = Archipelago._GetLocationFromLocationData({ id = row["location"] })
 
-                if location_data and location_data['raw_data']['randomized'] ~= nil then
-                    is_randomized = location_data['raw_data']['randomized']
+                if location_data ~= nil then
+                    if location_data['raw_data'] ~= nil then
+                        if location_data['raw_data']['randomized'] ~= nil then
+                            is_randomized = location_data['raw_data']['randomized']
+                        end
+                    end
                 end
             end
+
             if item_data["name"] and row["player"] ~= nil and is_randomized == 0 then
                 Logging.Log("ReceiveItemStarted")
                 Archipelago.ReceiveItem(item_data["name"], row["player"], is_randomized)
@@ -199,13 +204,19 @@ function Archipelago.ProcessItemsQueue()
             local location_data = nil
             local is_randomized = 1
 
+
             if row["location"] ~= nil and row["location"] > 0 then
                 location_data = Archipelago._GetLocationFromLocationData({ id = row["location"] })
 
-                if location_data and location_data['raw_data']['randomized'] ~= nil then
-                    is_randomized = location_data['raw_data']['randomized']
+                if location_data ~= nil then
+                    if location_data['raw_data'] ~= nil then
+                        if location_data['raw_data']['randomized'] ~= nil then
+                            is_randomized = location_data['raw_data']['randomized']
+                        end
+                    end
                 end
             end
+
 
             if item_data["name"] and row["player"] ~= nil then
                 Archipelago.ReceiveItem(item_data["name"], row["player"], is_randomized)
@@ -511,12 +522,13 @@ function Archipelago.SendVictory()
     AP_REF.APClient:StatusUpdate(AP_REF.AP.ClientStatus.GOAL)   
 end
 
-function Archipelago._GetItemFromItemsData(item_data) -- dunno what its use
+function Archipelago._GetItemFromItemsData(item_data) -- translate from item name to item data or some sort ?
     local player = Archipelago.GetPlayer()
     local translated_item = {}
     
     translated_item['name'] = AP_REF.APClient:get_item_name(item_data['id'], player['game'])
-
+    log.debug("Translated Item (GETITEMFROMITEMSDATA)")
+    log.debug(tostring(translated_item['name']))
     if not translated_item['name'] then
         return nil
     end
@@ -604,8 +616,9 @@ function Archipelago._GetLocationFromLocationData(location_data, include_sent_lo
     end
     Logging.Log("translated location name")
     Logging.Log(tostring(translated_location['name']))
-    translated_location['id'] = AP_REF.APClient:get_location_id(translated_location['name'], player['game'])
-
+    if translated_location['name'] ~= nil then
+        translated_location['id'] = AP_REF.APClient:get_location_id(translated_location['name'], player['game'])
+    end
     -- now that we have name and id, return them
     return translated_location
 end
