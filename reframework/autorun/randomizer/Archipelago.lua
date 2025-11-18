@@ -113,7 +113,7 @@ end
 function Archipelago.CanReceiveItems()
     -- wait until the player is in game, with AP connected, and with an available item box (that's not in use) -- and is not dead (because it will just spam the item received)
     -- before sending any items over
-    return Scene.isInGame() and Archipelago.IsConnected() and not Scene.isUsingItemBox() and ItemBox.GetAnyAvailable() and not Scene.isGameOver()
+    return not Scene.isGameOver() and Scene.isInGame() and Archipelago.IsConnected() and not Scene.isUsingItemBox() and ItemBox.GetAnyAvailable()
 end
 
 function Archipelago.CanBeKilled()
@@ -131,41 +131,43 @@ function Archipelago.ItemsReceivedHandler(items_received)
     local itemsWaiting = {}
 
     -- add all of the randomized items to an item queue to wait for send
-    for k, row in pairs(items_received) do
-        Logging.Log("Item Received Handler :")
-        Logging.Log("Item Received with index")
-        Logging.Log(row["index"])
-        Logging.Log("Last index saved :")
-        Logging.Log(Storage.lastSavedItemIndex)
-        -- if the index of the incoming item is greater than the index of our last item at save, check to see if it's randomized
-        -- because ONLY non-randomized items escape the queue; everything else gets queued
-        if row["index"] ~= nil and (not Storage.lastSavedItemIndex or row["index"] > Storage.lastSavedItemIndex) then
-            local item_data = Archipelago._GetItemFromItemsData({ id = row["item"] })
-            local location_data = nil
-            local is_randomized = 1
+    if Archipelago.CanReceiveItems() then
+        for k, row in pairs(items_received) do
+            Logging.Log("Item Received Handler :")
+            Logging.Log("Item Received with index")
+            Logging.Log(row["index"])
+            Logging.Log("Last index saved :")
+            Logging.Log(Storage.lastSavedItemIndex)
+            -- if the index of the incoming item is greater than the index of our last item at save, check to see if it's randomized
+            -- because ONLY non-randomized items escape the queue; everything else gets queued
+            if row["index"] ~= nil and (not Storage.lastSavedItemIndex or row["index"] > Storage.lastSavedItemIndex) then
+                local item_data = Archipelago._GetItemFromItemsData({ id = row["item"] })
+                local location_data = nil
+                local is_randomized = 1
 
-            if row["location"] ~= nil and row["location"] > 0 then
-                location_data = Archipelago._GetLocationFromLocationData({ id = row["location"] })
+                if row["location"] ~= nil and row["location"] > 0 then
+                    location_data = Archipelago._GetLocationFromLocationData({ id = row["location"] })
 
-                if location_data ~= nil then
-                    if location_data['raw_data'] ~= nil then
-                        if location_data['raw_data']['randomized'] ~= nil then
-                            is_randomized = location_data['raw_data']['randomized']
+                    if location_data ~= nil then
+                        if location_data['raw_data'] ~= nil then
+                            if location_data['raw_data']['randomized'] ~= nil then
+                                is_randomized = location_data['raw_data']['randomized']
+                            end
                         end
                     end
                 end
-            end
 
-            if item_data["name"] and row["player"] ~= nil and is_randomized == 0 then
-                Logging.Log("ReceiveItemStarted")
-                Archipelago.ReceiveItem(item_data["name"], row["player"], is_randomized)
-            else
-                table.insert(Archipelago.itemsQueue, row)
-                table.insert(itemsWaiting, item_data['name'])
+                if item_data["name"] and row["player"] ~= nil and is_randomized == 0 then
+                    Logging.Log("ReceiveItemStarted")
+                    Archipelago.ReceiveItem(item_data["name"], row["player"], is_randomized)
+                else
+                    table.insert(Archipelago.itemsQueue, row)
+                    table.insert(itemsWaiting, item_data['name'])
+                end
             end
         end
     end
-
+    
     if not Archipelago.CanReceiveItems() and #itemsWaiting > 0 then
         GUI.AddTexts({
             { message="Item(s) waiting for nearby item box: " },

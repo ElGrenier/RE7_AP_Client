@@ -6,3 +6,12 @@ reframework/autorun/EMV Engine
 reframework/data/Console/
 reframework/data/EMV_Engine/
 reframework/autorun_disabled
+reframework/autorun/RE7CutsceneSkipper.lua
+reframework/fonts/Cormorant-VariableFont_wght.ttf
+reframework/fonts/Merriweather-Bold.ttf
+reframework/fonts/Prompt-Black.ttf
+reframework/fonts/PTMono-Regular.ttf
+reframework/fonts/SpecialElite-Regular.ttf
+reframework/fonts/Prompt-Regular.ttf
+reframework/fonts/Merriweather-Regular.ttf
+reframework/fonts/Merriweather-Black.ttf

@@ -1070,7 +1070,8 @@
         },
         "item_object": "InteractWeapon",
         "parent_object": "wp1140_Magnum_Get",
-        "folder_path": "Chapter/Chapter3/c03_Garden/c03_TrailerHouse/c03_TrailerHouse_sm"
+        "folder_path": "Chapter/Chapter3/c03_Garden/c03_TrailerHouse/c03_TrailerHouse_sm",
+	"randomized":0
     },
     {
         "name":"In the Caravane, Steroid in the Cage with 3 Coins Necessary",

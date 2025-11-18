@@ -36,7 +36,7 @@ end
 -- end
 
 
--- List of "hardcodded" item test (to remove them from inventory, and skip to chapter 2)
+-- List of "hardcoded" item test (to remove them from inventory, and skip to chapter 2) (and fix scenario_qurick)
 
 local skip_chap_2_item_name = "InteractSendFsm"
 local skip_chap_2_folder_path = "Chapter/Chapter1/Outside/c01_Outside03/c01_Outside03_sm"
@@ -44,7 +44,6 @@ local skip_chap_2_folder_path = "Chapter/Chapter1/Outside/c01_Outside03/c01_Outs
 local knife_item_name = "InteractWeapon"
 local knife_parent_name = "wp1190_Knife_Get"
 local knife_folder_path = "Chapter/Chapter3/ItemSet_c03/MainHouse_West/Common/KeyItem"
-
 
 local g17_item_name = "InteractWeapon"
 local g17_parent_name = "wp1210_Handgun_Get"
@@ -57,6 +56,18 @@ local snd_g17_folder_path = "Chapter/Chapter3/ItemSet_c03/MainHouse_West/Common/
 local grenade_launcher_item_name = "InteractWeapon"
 local grenade_launcher_parent_name = "wp1110_PortableCannon_Get"
 local grenade_launcher_folder_path = "Chapter/Chapter3/ItemSet_c03/MainHouse_East/Normal/KeyItem"
+
+local scenario_bath_item_name = "InteractDetailSearch"
+local scenario_bath_parent_name = "sm9092_ShadowPiece02_DetailSearchItem"
+local scenario_bath_folder_path = "Chapter/Chapter3/c03_MainHouse/c03_MainHouse2F/c03_MainHouse2FBath/c03_MainHouse2FBath_sm"
+
+local scenario_shadow_puzzle_item_name = "Interact_sm9091_ShadowPuzzle02A"
+local scenario_shadow_puzzle_parent_name = ""
+local scenario_shadow_puzzle_folder_path = "Chapter/Chapter3/c03_MainHouse/c03_MainHouseHall/c03_MainHouseHall_sm"
+
+local scenario_dissection_key_item_name = "InteractDetailSearch"
+local scenario_dissection_key_parent_name = "sm2050_workroomkey01A_Get"
+local scenario_dissection_key_folder_path = "Chapter/Chapter3/c03_TaxidermyRoom/c03_TaxidermyRoomB1F/c03_RightAreaB1FMorgue/c03_RightAreaB1FMorgue_sm"
 
 
 function Items.SetupInteractHook()
@@ -163,13 +174,20 @@ function Items.SetupInteractHook()
             elseif item_name == snd_g17_item_name and item_folder_path == snd_g17_folder_path and item_parent_name == snd_g17_parent_name then
                 log.debug("DEBUG : Trying to remove the snd G17 from Inventory")
                 Inventory.cinematic_removed_gun = false
+                Storage.scenarioState = 4
 
             elseif item_name == grenade_launcher_item_name and item_folder_path == grenade_launcher_folder_path and item_parent_name == grenade_launcher_parent_name then
                 log.debug("DEBUG : Trying to remove the Grenade Launcher from Inventory")
                 Inventory.RemoveItem("GrenadeLauncher")
                 Inventory.removed_grenade_launcher = false
+            elseif item_name == scenario_bath_item_name and item_folder_path == scenario_bath_folder_path and item_parent_name == scenario_bath_parent_name then
+                Storage.scenarioState = 5
+            elseif item_name == scenario_shadow_puzzle_item_name and item_folder_path == scenario_shadow_puzzle_folder_path and item_parent_name == scenario_shadow_puzzle_parent_name then
+                Storage.scenarioState = 7
+            elseif item_name == scenario_dissection_key_item_name and item_folder_path == scenario_dissection_key_folder_path and item_parent_name == scenario_dissection_key_parent_name then
+                Storage.scenarioState = 8
+
             end
-    
             local isLocationRandomized = Archipelago.IsLocationRandomized(location_to_check)
 
             if Archipelago.IsItemLocation(location_to_check) and (Archipelago.SendLocationCheck(location_to_check) or Archipelago.IsConnected()) then

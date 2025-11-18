@@ -16,6 +16,7 @@ Lookups = require("randomizer/Lookups")
 
 Logging = require("randomizer/Logging")
 Archipelago = require("randomizer/Archipelago")
+CutsceneObjects = require("randomizer/CutsceneObjects")
 DestroyObjects = require("randomizer/DestroyObjects")
 GUI = require("randomizer/GUI")
 Helpers = require("randomizer/Helpers")
@@ -62,7 +63,7 @@ re.on_pre_application_entry("UpdateBehavior", function()
             Inventory.removed_gun = true
         end
 
-        if Inventory.GetHandRightItem() == 7 and Inventory.cinematic_removed_gun == false and Player.GetYPosition() == 1.48 then
+        if Inventory.cinematic_removed_gun == false and Player.GetYPosition() == 1.48 then
             Inventory.RemoveMainhandItem()
             Inventory.RemoveItem("Handgun_G17")
             Inventory.cinematic_removed_gun = true
@@ -112,6 +113,7 @@ re.on_pre_application_entry("UpdateBehavior", function()
             Archipelago.waitingForSync = true
         end
     end
+    CutsceneObjects.Init()
 end)
 
 re.on_frame(function ()

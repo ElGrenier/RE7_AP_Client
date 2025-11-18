@@ -139,29 +139,17 @@ function Typewriters.DisplayWarpMenu()
         Typewriters.UnlockAll()
     end
 
-    if imgui.button("Give Debug Items") then
+    if imgui.button("Give Debug/Cheat Items") then
         ItemBox.AddItem("UnlimitedAmmo", 1)
         ItemBox.AddItem("AlphaGrass", 1)
+        ItemBox.AddItem("MasterKey", 1)
+        ItemBox.AddItem("MorgueKey", 1)
+        ItemBox.AddItem("TalismanKey", 1)
+        ItemBox.AddItem("WorkroomKey", 1)
     end
 
-    if imgui.button("Add Inventory Item") then
-        local itemId = "UnlimitedAmmo"
-        local quantity = 1
-
-        -- Add to item box
-        inventory = Inventory.GetInventory()
-        local itemBoxData = inventory:get_field("<ItemBoxData>k__BackingField")
-        itemBoxData:addItem(itemId, quantity, nil)
-
-        -- Move to inventory
-        if not inventoryMenu then return end
-        local itemParam = itemBoxData:findItem(itemId)
-        inventoryMenu:moveItemBoxToInventory(itemParam, quantity)
-    end
-
-
-    if imgui.button("Test") then
-        Inventory.AddItemtoInventory()
+    if imgui.button("Give X-Ray Glasses") then
+        ItemBox.AddItem("AlphaGrass", 1)
     end
 
     imgui.pop_font()
