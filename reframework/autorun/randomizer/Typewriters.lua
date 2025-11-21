@@ -139,13 +139,13 @@ function Typewriters.DisplayWarpMenu()
         Typewriters.UnlockAll()
     end
 
-    if imgui.button("Give Debug/Cheat Items") then
+    if imgui.button("Give Debug Items") then
         ItemBox.AddItem("UnlimitedAmmo", 1)
-        ItemBox.AddItem("AlphaGrass", 1)
         ItemBox.AddItem("MasterKey", 1)
         ItemBox.AddItem("MorgueKey", 1)
         ItemBox.AddItem("TalismanKey", 1)
         ItemBox.AddItem("WorkroomKey", 1)
+
     end
 
     if imgui.button("Give X-Ray Glasses") then

@@ -55,12 +55,16 @@ function Scene.isInPause()
     return Scene.getGameManager():call("get_IsPause") and Scene.isInGame()
 end
 
+function Scene.isGameLoading()
+    return Scene.getGameManager():call("get_IsSceneLoading()")
+end
+
 function Scene.isGameOver()
     return Scene.getGameManager():call("isGameOver")
 end
 
 function Scene.goToGameOver()
-    return Scene.getGameManager():call("setGameOverFlag", true)
+    return Scene.getGameManager():call("setGameOverFlag(System.Boolean)", true)
 end
 
 function Scene.isUsingItemBox()

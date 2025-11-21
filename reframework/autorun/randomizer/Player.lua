@@ -30,10 +30,9 @@ function Player.Kill()
     if Archipelago.wasDeathLinked == false then
         if Scene.isInPause() or Scene.isUsingItemBox() or not Scene.isInGame() then
             Player.waitingForKill = true
-
             return
         end
-
+    else
         Player.waitingForKill = false
         Scene.goToGameOver()
     end

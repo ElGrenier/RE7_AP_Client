@@ -133,11 +133,11 @@ function Archipelago.ItemsReceivedHandler(items_received)
     -- add all of the randomized items to an item queue to wait for send
     if Archipelago.CanReceiveItems() then
         for k, row in pairs(items_received) do
-            Logging.Log("Item Received Handler :")
-            Logging.Log("Item Received with index")
-            Logging.Log(row["index"])
-            Logging.Log("Last index saved :")
-            Logging.Log(Storage.lastSavedItemIndex)
+            -- Logging.Log("Item Received Handler :")
+            -- Logging.Log("Item Received with index")
+            -- Logging.Log(row["index"])
+            -- Logging.Log("Last index saved :")
+            -- Logging.Log(Storage.lastSavedItemIndex)
             -- if the index of the incoming item is greater than the index of our last item at save, check to see if it's randomized
             -- because ONLY non-randomized items escape the queue; everything else gets queued
             if row["index"] ~= nil and (not Storage.lastSavedItemIndex or row["index"] > Storage.lastSavedItemIndex) then
@@ -192,13 +192,11 @@ function Archipelago.ProcessItemsQueue()
     Archipelago.itemsQueue = {}
 
     for k, row in pairs(items) do
-        Logging.Log("ProcessItemsQueue :")
-        Logging.Log("Item Received with index")
-        Logging.Log(row["index"])
-        Logging.Log("Last index saved :")
-        Logging.Log(Storage.lastSavedItemIndex)
-
-
+        -- Logging.Log("ProcessItemsQueue :")
+        -- Logging.Log("Item Received with index")
+        -- Logging.Log(row["index"])
+        -- Logging.Log("Last index saved :")
+        -- Logging.Log(Storage.lastSavedItemIndex)
 
         -- if the index of the incoming item is greater than the index of our last item at save, accept it
         if row["index"] ~= nil and (not Storage.lastSavedItemIndex or row["index"] > Storage.lastSavedItemIndex) then
@@ -344,7 +342,7 @@ function Archipelago.BouncedHandler(json_rows) -- Used to process Deathlink
         -- Check if in the json there a deathlink tag 
         for k, tag in pairs(json_rows["tags"]) do
             if tag == "DeathLink" then
-                if Archipelago.CanBeKilled() then
+                if Archipelago.CanBeKilled() then -- Works
                     if json_rows["data"]["cause"] then
                         GUI.AddTexts({
                             { message="Deathlink received: " },
@@ -357,7 +355,7 @@ function Archipelago.BouncedHandler(json_rows) -- Used to process Deathlink
                         })
                     end
                     Archipelago.wasDeathLinked = true
-                    Player.Kill()
+                    Player.Kill() --Somehow don't work ???
                 end
                 break
             end
@@ -456,7 +454,7 @@ function Archipelago.SendDeathLink() --Process Deathlink (obviously)
 end
 
 function Archipelago.ReceiveItem(item_name, sender, is_randomized) -- Process receiving items (by checking the game_id in the items.json file)
-    Logging.Log("Reception item : ".. tostring(item_name))
+    -- Logging.Log("Reception item : ".. tostring(item_name))
     local item_ref = nil
     local item_number = nil
     local item_ammo = nil
@@ -481,7 +479,7 @@ function Archipelago.ReceiveItem(item_name, sender, is_randomized) -- Process re
         end
     end
     if not item_ref then
-    Logging.Log("Item inconnu dans Lookups.items : " .. tostring(item_name))
+    -- Logging.Log("Item inconnu dans Lookups.items : " .. tostring(item_name))
     end
 
     if item_ref and item_number then
@@ -616,8 +614,8 @@ function Archipelago._GetLocationFromLocationData(location_data, include_sent_lo
             end
         end
     end
-    Logging.Log("translated location name")
-    Logging.Log(tostring(translated_location['name']))
+    -- Logging.Log("translated location name")
+    -- Logging.Log(tostring(translated_location['name']))
     if translated_location['name'] ~= nil then
         translated_location['id'] = AP_REF.APClient:get_location_id(translated_location['name'], player['game'])
     end

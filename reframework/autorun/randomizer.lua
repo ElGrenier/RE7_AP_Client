@@ -76,6 +76,7 @@ re.on_pre_application_entry("UpdateBehavior", function()
             log.debug("Tried removing Grenade Launcher")
         end
 
+
         if Archipelago.waitingForSync then
             Archipelago.waitingForSync = false
             Archipelago.Sync()
@@ -92,13 +93,16 @@ re.on_pre_application_entry("UpdateBehavior", function()
                 Archipelago.waitingForInvincibiltyOff = false
             end
         end
-
-        if Player.waitingForKill then
-            Player.Kill()
-        else
-            Archipelago.canDeathLink = true
-            Archipelago.wasDeathLinked = false
+        
+        if not Scene:isGameOver() then
+            if Player.waitingForKill then
+                Player.Kill()
+            else
+                Archipelago.canDeathLink = true
+                Archipelago.wasDeathLinked = false
+            end
         end
+
     else
         DestroyObjects.isInit = false -- look for objects that should be destroyed and destroy them again
     end
