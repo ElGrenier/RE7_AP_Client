@@ -159,8 +159,7 @@ function Items.SetupInteractHook()
             -- Special item condition here
             if item_name == skip_chap_2_item_name and item_folder_path == skip_chap_2_folder_path then
                 log.debug("DEBUG : Trying Skipping to Chap 2")
-                local gameManager = Scene.getGameManager()
-                gameManager:call("chapterJumpRequest(System.String, System.Boolean, System.String)", "Chapter3_Start", false, "")
+                Scene.getGameManager():call("chapterJumpRequest(System.String, System.Boolean, System.String)", "Chapter3_Start", false, "")
 
             elseif item_name == knife_item_name and item_folder_path == knife_folder_path and item_parent_name == knife_parent_name then
                 log.debug("DEBUG : Trying to remove knife from Inventory")

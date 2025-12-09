@@ -45,5 +45,10 @@ function Helpers.component(game_object, type_name)
 end
 
 
+function Helpers.create_posv3(x,y,z)
+    local posv3 = ValueType.new(sdk.find_type_definition("via.vec3"))
+    posv3:call(".ctor(System.Single, System.Single, System.Single)", x, y, z)
+    return posv3
+end
 
 return Helpers

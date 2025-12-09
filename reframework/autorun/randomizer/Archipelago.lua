@@ -376,9 +376,12 @@ function Archipelago.IsLocationRandomized(location_data) -- so it reuse the info
     if not location then
         return false
     end
-    if location['raw_data']['randomized'] == 0 and not location['raw_data']['force_item'] then
+    if location['raw_data'] == nil then
         return false
     end
+        if location['raw_data']['randomized'] == 0 and not location['raw_data']['force_item'] then
+            return false
+        end
     return true
 end
 
@@ -412,6 +415,10 @@ function Archipelago.SendLocationCheck(location_data) -- so it reuse the info us
 
     local result = AP_REF.APClient.LocationChecks(AP_REF.APClient, location_ids) -- Send an location check (even if "result" is not used anywhere)
     local sent_loc = location['raw_data']    
+
+    if sent_loc == nil then
+        return false
+    end
 
     for k, loc in pairs(Lookups.locations) do
 

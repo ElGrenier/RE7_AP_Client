@@ -2,22 +2,18 @@ local CutsceneObjects = {}
 
 
 function CutsceneObjects.Init()
-    -- if Storage.scenarioState == nil then
-    --     Storage.scenarioState = 0
-    -- end
+    if Storage.scenarioState == nil then
+        Storage.scenarioState = 999
+    end
 
     -- Shadow Puzzle removal/activation
     if Storage.scenarioState == 4 then
-        local gimm = Helpers.gameObject("sm9091_ShadowPuzzle02A_Gimmick")
-        local interactObj = Helpers.transform(gimm):call("find", "Interact_sm9091_ShadowPuzzle02A"):call("get_GameObject")
-        local interactBase = Helpers.old_component(interactObj, "InteractObjectBase")
+        local interactBase = Helpers.old_component(Helpers.transform(Helpers.gameObject("sm9091_ShadowPuzzle02A_Gimmick")):call("find", "Interact_sm9091_ShadowPuzzle02A"):call("get_GameObject"), "InteractObjectBase")
         interactBase:set_field("IsEnable", false)
     end
 
     if Storage.scenarioState == 5 then
-        local gimm = Helpers.gameObject("sm9091_ShadowPuzzle02A_Gimmick")
-        local interactObj = Helpers.transform(gimm):call("find", "Interact_sm9091_ShadowPuzzle02A"):call("get_GameObject")
-        local interactBase = Helpers.old_component(interactObj, "InteractObjectBase")
+        local interactBase = Helpers.old_component(Helpers.transform(Helpers.gameObject("sm9091_ShadowPuzzle02A_Gimmick")):call("find", "Interact_sm9091_ShadowPuzzle02A"):call("get_GameObject"), "InteractObjectBase")
         interactBase:set_field("IsEnable", true)
         Storage.scenarioState = 6
     end
@@ -34,8 +30,7 @@ function CutsceneObjects.Init()
 
     if Storage.scenarioState <= 5 then
         -- Desactivate door interaction
-        local door_gimm = Helpers.gameObject("InteractDoor_ItemOpenF")
-        local door_interactButtonBase = Helpers.old_component(door_gimm, "InteractDoor")
+        local door_interactButtonBase = Helpers.old_component(Helpers.gameObject("InteractDoor_ItemOpenF"), "InteractDoor")
         door_interactButtonBase:set_field("IsEnable", false)
     end
 
@@ -47,13 +42,13 @@ function CutsceneObjects.Init()
 
     -- Red Dog Head removal/activation
 
-    if Storage.scenarioState <= 8 then
+    if Storage.scenarioState <= 7 then
         local gimm = Helpers.gameObject("sm2011_TripleCrest01C_InteractSendFsm")
         local interactButtonBase = Helpers.old_component(gimm, "InteractSendFsm")
         interactButtonBase:set_field("IsEnable", false)
     end
 
-    if Storage.scenarioState == 9 then
+    if Storage.scenarioState == 8 then
         local gimm = Helpers.gameObject("sm2011_TripleCrest01C_InteractSendFsm")
         local interactButtonBase = Helpers.old_component(gimm, "InteractSendFsm")
         interactButtonBase:set_field("IsEnable", true)
@@ -70,9 +65,10 @@ end
 -- 3 = ??? (unset)
 -- 4 = The second gun has been taken (the one to kill the dad)
 -- 5 = The wooden puzzle in the bath has been taken
--- 6 = The Shadow puzzle has been interacted (not solved, but can't make the player not)
--- 7 = The Red Dog head has been taken
-
+-- 6 = The Shadow puzzle has been solved
+-- 7 = ???
+-- 8 The dissection room key has been taken
+-- 9 The red dog head has been taken
 -- ---------------------------------------------------
 
 

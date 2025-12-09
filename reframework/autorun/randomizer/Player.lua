@@ -18,8 +18,8 @@ function Player.GetCurrentPosition()
     return Player.GetLocalPlayer():get_Transform():get_LocalPosition()
 end
 
-function Player.WarpToPosition(vectorNew)
-    Player.GetGameObject():get_Transform():set_UniversalPosition(vectorNew)
+function Player.WarpToPosition(x, y, z)
+    Helpers.old_component(Player.GetLocalPlayer(), "PlayerMovement"):call("recovery(via.vec3)", Helpers.create_posv3(x, y, z))
 end
 
 function Player.LookAt(transform)
@@ -36,18 +36,6 @@ function Player.Kill()
         Player.waitingForKill = false
         Scene.goToGameOver()
     end
-end
-
-
-
-function Player.GetYPosition()
-    local player_object = Player.GetLocalPlayer()
-    local player_transform = player_object:call("get_Transform")
-    player_position = player_transform:call("get_LocalPosition")
-    -- log.debug(Helpers.Round(player_position.x))
-    -- log.debug(Helpers.Round(player_position.y))
-    -- log.debug(Helpers.Round(player_position.z))
-    return Helpers.Round(player_position.y)
 end
 
 return Player

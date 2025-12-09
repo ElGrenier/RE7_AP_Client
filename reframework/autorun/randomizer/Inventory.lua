@@ -7,8 +7,7 @@ end
 
 
 function Inventory.RemoveItem(itemId)
-    local inventory = Helpers.component(Player.GetLocalPlayer(), "app.Inventory")
-    local item_list = inventory:get_field("_ItemList")
+    local item_list = Inventory.GetInventory():get_field("_ItemList")
     local count = item_list:call("get_Count")
     local real_count = count - 1 -- So its the same as the index value
 
@@ -18,38 +17,20 @@ function Inventory.RemoveItem(itemId)
         local Item_name = Item_test:get_field("_ItemData"):get_field("ItemDataID")
 
         if Item_name == itemId then
-            inventory:call("removeItem(app.Item)", Item_test)
+            Inventory.GetInventory():call("removeItem(app.Item)", Item_test)
         end
     end
 end
 
 function Inventory.RemoveMainhandItem()
-    local instance = sdk.get_managed_singleton("app.InteractManager") 
-
-    -- Étape 3 : accéder au champ _PlayerStatus de l'instance
-    local playerStatus = instance:get_field("_PlayerStatus")
-
-    -- Étape 4 : accéder à EquipManager
-    local equipManager = playerStatus:get_field("EquipManager")
-
-    -- Étape 5 : appel de méthode sur equipManager
-    equipManager:call("equipWeapon(app.WeaponID, app.CharacterDefine.Hand)", 0, 0)
+    local instance = sdk.get_managed_singleton("app.InteractManager"):get_field("_PlayerStatus"):get_field("EquipManager"):call("equipWeapon(app.WeaponID, app.CharacterDefine.Hand)", 0, 0)
     log.debug("Trying to remove the Equiped Item")
 end
 
 
 function Inventory.GetHandRightItem()
-    local instance = sdk.get_managed_singleton("app.InteractManager") 
-
-    -- Étape 3 : accéder au champ _PlayerStatus de l'instance
-    local playerStatus = instance:get_field("_PlayerStatus")
-
-    -- Étape 4 : accéder à EquipManager
-    local equipManager = playerStatus:get_field("EquipManager")
-
-    test = equipManager:get_field("EquipWeaponIdRight")
-    -- log.debug(test)
-    return test
+    local instance = sdk.get_managed_singleton("app.InteractManager"):get_field("_PlayerStatus"):get_field("EquipManager"):get_field("EquipWeaponIdRight")
+    return instance
 end
 
 -- function Inventory.AddItemtoInventory()

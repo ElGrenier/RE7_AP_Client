@@ -1,8 +1,6 @@
 local Typewriters = {}
 Typewriters.unlocked_typewriters = {}
 
-
-
 -- Allowing specifying either the readable name or the item name, so both AP options and Item interaction can unlock
 function Typewriters.Unlock(name, item_folder_path)
     if #Lookups.typewriters == 0 then -- no typewriters, no typewriters to unlock
@@ -35,6 +33,7 @@ function Typewriters.GetAllUnlocked()
     return typewriter_item_names
 end
 
+
 function Typewriters.DisplayWarpMenu()
     imgui.begin_window("Fast Travel - Typewriters", nil,
         8 -- NoScrollbar
@@ -65,21 +64,8 @@ function Typewriters.DisplayWarpMenu()
                 local folderLoaded = typewriter["folder_path"]
                 local chapterNumber = typewriter["chapter"] -- chapters start at 4 for ch 1, because title is 3
 
-                local posv3 = ValueType.new(sdk.find_type_definition("via.vec3"))
-                posv3:call(".ctor(System.Single, System.Single, System.Single)", pos[1], pos[2], pos[3])
-                -- log.debug("posv3")
-                -- log.debug(posv3.x)
-                -- log.debug(posv3.y)
-                -- log.debug(posv3.z)
-
-
-
-
-                local playerObject = Player.GetGameObject()
-                playerMovement = Helpers.component(playerObject, "PlayerMovement")
-                gameMaster = Scene.getGameMaster()
                 gameManager = Scene.getGameManager()
-                saveDataManager = Helpers.component(gameMaster, "SaveDataManager")
+                saveDataManager = Helpers.component(Scene.getGameMaster(), "SaveDataManager")
 
                 sceneLocal = sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), sdk.find_type_definition("via.SceneManager"), "get_CurrentScene()")
                 newFolder = sceneLocal:findFolder(folderLoaded)
@@ -101,7 +87,7 @@ function Typewriters.DisplayWarpMenu()
                 gameManager:call("deactivateFolder(via.Folder, System.Boolean)", oldFolder_1, false)
                 saveDataManager:call("folderLoadRequest(via.Folder, System.Boolean)", newFolder, false)
 
-                playerMovement:call("recovery(via.vec3)", posv3)
+                Player.WarpToPosition(pos[1], pos[2], pos[3])
 
                 -- currentChapter = gameManager:call("get_CurrentChapter()")
                 -- log.debug(currentChapter)
@@ -121,36 +107,27 @@ function Typewriters.DisplayWarpMenu()
 
                 
                 
-            end
-        end
-
-        imgui.pop_style_color(1)
-
-        -- Break the list onto two lines around the middle; i.e., skip the same_line once
-        if not typewriter["line_break"] then
-            imgui.same_line()
         end
     end
 
-    imgui.new_line()
-    imgui.new_line()
+    imgui.pop_style_color(1)
 
-    if imgui.button("Unlock All Typewriters") then
-        Typewriters.UnlockAll()
+    -- Break the list onto two lines around the middle; i.e., skip the same_line once
+    if not typewriter["line_break"] then
+        imgui.same_line()
     end
+end
 
-    if imgui.button("Give Debug Items") then
-        ItemBox.AddItem("UnlimitedAmmo", 1)
-        ItemBox.AddItem("MasterKey", 1)
-        ItemBox.AddItem("MorgueKey", 1)
-        ItemBox.AddItem("TalismanKey", 1)
-        ItemBox.AddItem("WorkroomKey", 1)
+imgui.new_line()
+imgui.new_line()
 
-    end
+if imgui.button("Unlock All Typewriters") then
+    Typewriters.UnlockAll()
+end
 
-    if imgui.button("Give X-Ray Glasses") then
-        ItemBox.AddItem("AlphaGrass", 1)
-    end
+if imgui.button("Give X-Ray Glasses") then
+     ItemBox.AddItem("AlphaGrass", 1)
+ end
 
     imgui.pop_font()
     imgui.end_window()

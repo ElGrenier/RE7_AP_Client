@@ -63,7 +63,7 @@ re.on_pre_application_entry("UpdateBehavior", function()
             Inventory.removed_gun = true
         end
 
-        if Inventory.cinematic_removed_gun == false and Player.GetYPosition() == 1.48 then
+        if Inventory.cinematic_removed_gun == false and Helpers.Round(Player.GetCurrentPosition().y) == 1.48 then
             Inventory.RemoveMainhandItem()
             Inventory.RemoveItem("Handgun_G17")
             Inventory.cinematic_removed_gun = true
