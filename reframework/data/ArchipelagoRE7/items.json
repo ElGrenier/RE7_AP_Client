@@ -213,14 +213,14 @@
         "type": "Ammo",
         "name": "Flame Rounds",
         "game_id": "FlameBulletS",
-        "count": 100,
+        "count": 1,
         "progression": 0
     },
     {
         "type": "Ammo",
         "name": "Neuro Rounds",
         "game_id": "AcidBulletS",
-        "count": 100,
+        "count": 1,
         "progression": 0
     },
     {
