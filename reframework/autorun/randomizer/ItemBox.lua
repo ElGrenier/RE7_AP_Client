@@ -2,7 +2,12 @@ local ItemBox = {}
 
 
 function ItemBox.GetAnyAvailable()
-    return true
+	callCurentChapter = Scene.getGameManager():call("get_CurrentChapter()")
+	if callCurentChapter <= 4 then
+		return false
+	else
+		return true
+	end
 end
 
 -- function ItemBox.GetAnyAvailable()

@@ -2,10 +2,6 @@ local CutsceneObjects = {}
 
 
 function CutsceneObjects.Init()
-    if Storage.scenarioState == nil then
-        Storage.scenarioState = 999
-    end
-
     -- Shadow Puzzle removal/activation
     if Storage.scenarioState == 4 then
         local interactBase = Helpers.old_component(Helpers.transform(Helpers.gameObject("sm9091_ShadowPuzzle02A_Gimmick")):call("find", "Interact_sm9091_ShadowPuzzle02A"):call("get_GameObject"), "InteractObjectBase")
@@ -28,13 +24,13 @@ function CutsceneObjects.Init()
 --         end
 --     end
 
-    if Storage.scenarioState <= 5 then
+    if Storage.scenarioState <= 6 then
         -- Desactivate door interaction
         local door_interactButtonBase = Helpers.old_component(Helpers.gameObject("InteractDoor_ItemOpenF"), "InteractDoor")
         door_interactButtonBase:set_field("IsEnable", false)
     end
 
-    if Storage.scenarioState == 6 and Helpers.Round(Player.GetCurrentPosition().x) == -7.52 and Helpers.Round(Player.GetCurrentPosition().y) == 0.44 and Helpers.Round(Player.GetCurrentPosition().z) == -1.85 then
+    if Storage.scenarioState == 7 and Helpers.Round(Player.GetCurrentPosition().x) == -7.52 and Helpers.Round(Player.GetCurrentPosition().y) == 0.44 and Helpers.Round(Player.GetCurrentPosition().z) == -1.85 then
         local door_gimm = Helpers.gameObject("InteractDoor_ItemOpenF")
         local door_interactButtonBase = Helpers.old_component(door_gimm, "InteractDoor")
         door_interactButtonBase:set_field("IsEnable", true)
@@ -48,11 +44,10 @@ function CutsceneObjects.Init()
         interactButtonBase:set_field("IsEnable", false)
     end
 
-    if Storage.scenarioState == 8 then
+    if Storage.scenarioState >= 8 then
         local gimm = Helpers.gameObject("sm2011_TripleCrest01C_InteractSendFsm")
         local interactButtonBase = Helpers.old_component(gimm, "InteractSendFsm")
         interactButtonBase:set_field("IsEnable", true)
-        Storage.scenarioState = 10
     end
 end
 

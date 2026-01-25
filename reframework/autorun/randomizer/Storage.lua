@@ -14,7 +14,7 @@ function Storage.Load()
 
         Storage.swappedStartingWeapon = existing_file['swapped_starting_weapon'] or false
         
-        Storage.scenarioState = existing_file['scenario_state'] or 0
+        Storage.scenarioState = existing_file['scenario_state']
 
         for k, typewriter in pairs(unlocked_typewriters) do
             Typewriters.Unlock("", typewriter)
