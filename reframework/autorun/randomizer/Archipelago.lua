@@ -88,10 +88,6 @@ function Archipelago.SlotDataHandler(slot_data)
     Archipelago.seed = player["seed"]
     Archipelago.slot = player["slot"]
 
-    if slot_data.starting_weapon ~= nil then
-        Archipelago.starting_weapon = slot_data.starting_weapon
-    end
-
     if slot_data.death_link ~= nil then
         Archipelago.death_link = slot_data.death_link
     end

@@ -30,7 +30,7 @@ function CutsceneObjects.Init()
         door_interactButtonBase:set_field("IsEnable", false)
     end
 
-    if Storage.scenarioState == 7 and Helpers.Round(Player.GetCurrentPosition().x) == -7.52 and Helpers.Round(Player.GetCurrentPosition().y) == 0.44 and Helpers.Round(Player.GetCurrentPosition().z) == -1.85 then
+    if Storage.scenarioState >= 7 and Helpers.Round(Player.GetCurrentPosition().x) == -7.52 and Helpers.Round(Player.GetCurrentPosition().y) == 0.44 and Helpers.Round(Player.GetCurrentPosition().z) == -1.85 then
         local door_gimm = Helpers.gameObject("InteractDoor_ItemOpenF")
         local door_interactButtonBase = Helpers.old_component(door_gimm, "InteractDoor")
         door_interactButtonBase:set_field("IsEnable", true)

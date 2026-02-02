@@ -230,7 +230,8 @@
         "condition": {},
         "item_object": "InteractWeapon",
         "parent_object": "wp1190_Knife_Get",
-        "folder_path": "Chapter/Chapter3/ItemSet_c03/MainHouse_West/Common/KeyItem"
+        "folder_path": "Chapter/Chapter3/ItemSet_c03/MainHouse_West/Common/KeyItem",
+        "randomized": 0
     },
     {
         "name": "in the wooden box, at the entrance",
