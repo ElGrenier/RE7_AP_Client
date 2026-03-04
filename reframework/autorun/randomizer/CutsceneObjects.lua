@@ -2,13 +2,17 @@ local CutsceneObjects = {}
 
 
 function CutsceneObjects.Init()
+    if Storage.scenarioState == nil then
+        return CutsceneObjects
+    end
+
     -- Shadow Puzzle removal/activation
-    if Storage.scenarioState == 4 then
+    if Storage.scenarioState <= 4 then
         local interactBase = Helpers.old_component(Helpers.transform(Helpers.gameObject("sm9091_ShadowPuzzle02A_Gimmick")):call("find", "Interact_sm9091_ShadowPuzzle02A"):call("get_GameObject"), "InteractObjectBase")
         interactBase:set_field("IsEnable", false)
     end
 
-    if Storage.scenarioState == 5 then
+    if Storage.scenarioState >= 5 then
         local interactBase = Helpers.old_component(Helpers.transform(Helpers.gameObject("sm9091_ShadowPuzzle02A_Gimmick")):call("find", "Interact_sm9091_ShadowPuzzle02A"):call("get_GameObject"), "InteractObjectBase")
         interactBase:set_field("IsEnable", true)
         Storage.scenarioState = 6
@@ -50,6 +54,19 @@ function CutsceneObjects.Init()
         interactButtonBase:set_field("IsEnable", true)
     end
 end
+
+
+    if Storage.scenarioState <= 8 then
+        -- Desactivate door interaction
+        local door_dog_interactButtonBase = Helpers.old_component(Helpers.gameObject("InteractDoor_ItemOpenF"), "InteractDoor")
+        door_dog_interactButtonBase:set_field("IsEnable", false)
+    end
+
+        if Storage.scenarioState >= 9 then
+        -- Desactivate door interaction
+        local door_dog_interactButtonBase = Helpers.old_component(Helpers.gameObject("InteractDoor_ItemOpen"), "InteractDoor")
+        door_dog_interactButtonBase:set_field("IsEnable", false)
+    end
 
 
 -- -------------------------------------------------

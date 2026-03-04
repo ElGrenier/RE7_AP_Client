@@ -51,16 +51,22 @@ re.on_pre_application_entry("UpdateBehavior", function()
         Logging.Init()
 
         -- If the game is saving (detected by "get_NowSaving()"), update the storage to the last received items
-        local gameMaster = Scene.getGameMaster()
-        local saveDataManager = Helpers.old_component(gameMaster, "SaveDataManager")
-        local isSaving = saveDataManager:call("get_NowSaving()")
+        local isSaving = Helpers.old_component(Scene.getGameMaster(), "SaveDataManager"):call("get_NowSaving()")
         if isSaving then
             Storage.UpdateLastSavedItems()
         end
 
-        if Inventory.removed_gun == false and Inventory.GetHandRightItem() == 7 then
-            Inventory.RemoveMainhandItem()
-            Inventory.removed_gun = true
+        -- To remove log spam if the game can't find the player inventory
+        if Inventory.GetHandRightItem() ~= nil then
+            if Inventory.removed_gun == false and Inventory.GetHandRightItem() == 7 then
+                Inventory.RemoveMainhandItem()
+                Inventory.removed_gun = true
+            end
+            if Inventory.GetHandRightItem() == 16 and Inventory.removed_grenade_launcher == false then
+                Inventory.removed_grenade_launcher = true
+                Inventory.RemoveMainhandItem()
+                log.debug("Tried removing Grenade Launcher")
+            end
         end
 
         if Inventory.cinematic_removed_gun == false and Helpers.Round(Player.GetCurrentPosition().y) == 1.48 then
@@ -70,11 +76,7 @@ re.on_pre_application_entry("UpdateBehavior", function()
             log.debug("Tried removing Handgun AFTER cinematic")
         end
 
-        if Inventory.GetHandRightItem() == 16 and Inventory.removed_grenade_launcher == false then
-            Inventory.removed_grenade_launcher = true
-            Inventory.RemoveMainhandItem()
-            log.debug("Tried removing Grenade Launcher")
-        end
+        
 
 
         if Archipelago.waitingForSync then
@@ -126,9 +128,9 @@ re.on_frame(function ()
     --     GUI.ShowRandomizerLogo()
     -- end
 
-    -- if reframework:is_drawing_ui() then
-    --     Tools.ShowGUI()
-    -- end
+    if reframework:is_drawing_ui() then
+        Tools.ShowGUI()
+    end
 
     if Scene:isInGame() or Scene:isGameOver() then
         GUI.CheckForAndDisplayMessages()

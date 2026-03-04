@@ -154,7 +154,7 @@ function Archipelago.ItemsReceivedHandler(items_received)
                 end
 
                 if item_data["name"] and row["player"] ~= nil and is_randomized == 0 then
-                    Logging.Log("ReceiveItemStarted")
+                    -- Logging.Log("ReceiveItemStarted")
                     Archipelago.ReceiveItem(item_data["name"], row["player"], is_randomized)
                 else
                     table.insert(Archipelago.itemsQueue, row)
@@ -543,15 +543,6 @@ function Archipelago._GetItemFromItemsData(item_data) -- translate from item nam
 end
 
 
-function TablesEqual(t1, t2)
-    if t1 == nil or t2 == nil then return false end
-    if #t1 ~= #t2 then return false end
-    for i = 1, #t1 do
-        if t1[i] ~= t2[i] then return false end
-    end
-    return true
-end
-
 
 function Archipelago._GetLocationFromLocationData(location_data, include_sent_locations) -- This is what is hell like
     local player = Archipelago.GetPlayer()
@@ -608,7 +599,7 @@ function Archipelago._GetLocationFromLocationData(location_data, include_sent_lo
                     translated_location['raw_data'] = loc
                     break
 
-                elseif TablesEqual(loc['item_position'], location_data['item_position']) and loc['parent_object'] == nil then
+                elseif Helpers.TablesEqual(loc['item_position'], location_data['item_position']) and loc['parent_object'] == nil then
                     log.debug("Elseif Done")
                     translated_location['name'] = loc['region'] .. " - " .. loc['name']
                     translated_location['raw_data'] = loc
