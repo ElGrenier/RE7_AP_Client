@@ -1,11 +1,8 @@
 local Storage = {}
-Storage.storageInitialized = false
-Storage.lastReceivedItemIndex = -1
-Storage.lastSavedItemIndex = -1
 
 function Storage.Load()
     local existing_file = json.load_file(Storage.GetFilePath())
-    
+
     if existing_file ~= nil then
         local unlocked_typewriters = existing_file['unlocked_typewriters'] or {}
 
@@ -13,7 +10,7 @@ function Storage.Load()
         Storage.lastSavedItemIndex = existing_file['last_saved']
 
         Storage.swappedStartingWeapon = existing_file['swapped_starting_weapon'] or false
-        
+
         Storage.scenarioState = existing_file['scenario_state']
 
         for k, typewriter in pairs(unlocked_typewriters) do
@@ -28,17 +25,17 @@ end
 
 function Storage.Update()
     local player = Archipelago.GetPlayer()
-    
+
     -- no point in writing if filename is bad
     if not player["seed"] or not player["slot"] then
         return
     end
 
-    stored_values = { 
-        last_received = Storage.lastReceivedItemIndex, 
-        last_saved = Storage.lastSavedItemIndex, 
+    stored_values = {
+        last_received = Storage.lastReceivedItemIndex,
+        last_saved = Storage.lastSavedItemIndex,
         swapped_starting_weapon = Storage.swappedStartingWeapon,
-        unlocked_typewriters = Typewriters.GetAllUnlocked(), 
+        unlocked_typewriters = Typewriters.GetAllUnlocked(),
         scenario_state = Storage.scenarioState
     }
 
@@ -64,5 +61,7 @@ function Storage.Reset()
     Storage.swappedStartingWeapon = false
     Storage.scenarioState = 0
 end
+
+Storage.Reset()
 
 return Storage

@@ -81,7 +81,7 @@ function Typewriters.DisplayWarpMenu()
     --                 oldFolder_1 = sceneLocal:findFolder("Chapter/Chapter4")
     --             end
 
-                
+
     --             gameManager:call("set_CurrentChapter(app.GameManager.ChapterNo)", chapterNumber)
     --             gameManager:call("deactivateFolder(via.Folder, System.Boolean)", oldFolder_2, false)
     --             gameManager:call("deactivateFolder(via.Folder, System.Boolean)", oldFolder_1, false)
@@ -105,8 +105,8 @@ function Typewriters.DisplayWarpMenu()
     --             --     log.debug("Teleporting Chapter 1")
     --             -- end
 
-                
-                
+
+
     --     end
     -- end
 
@@ -116,23 +116,20 @@ function Typewriters.DisplayWarpMenu()
     -- if not typewriter["line_break"] then
     --     imgui.same_line()
     -- end
-end
 
-imgui.new_line()
-imgui.new_line()
+    imgui.new_line()
+    imgui.new_line()
 
--- if imgui.button("Unlock All Typewriters") then
---     Typewriters.UnlockAll()
--- end
+    -- if imgui.button("Unlock All Typewriters") then
+    --     Typewriters.UnlockAll()
+    -- end
 
-if imgui.button("Give X-Ray Glasses") then
-     ItemBox.AddItem("AlphaGrass", 1)
- end
+    if imgui.button("Give X-Ray Glasses") then
+    	ItemBox.AddItem("AlphaGrass", 1)
+	end
 
     imgui.pop_font()
     imgui.end_window()
 end
 
 return Typewriters
-
-
