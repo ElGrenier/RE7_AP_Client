@@ -1,7 +1,7 @@
 local Helpers = {}
 
 function Helpers.gameObject(obj_name)
-    return scene:call("findGameObject(System.String)", obj_name)
+    return Scene.getSceneObject():call("findGameObject(System.String)", obj_name)
 end
 
 function Helpers.transform(obj)
@@ -16,16 +16,16 @@ end
 function Helpers.get_children(xform)
 	local children = {}
 	local child = xform:call("get_Child")
-	while child do 
+	while child do
 		table.insert(children, child)
 		child = child:call("get_Next")
 	end
 	return children[1] and children
 end
 
-function Helpers.wait(seconds) 
-    local start = os.time() 
-    repeat until os.time() > start + seconds 
+function Helpers.wait(seconds)
+    local start = os.time()
+    repeat until os.time() > start + seconds
 end
 
 function Helpers.Round(number)
