@@ -5,19 +5,17 @@ Scene.gameManager = nil
 
 scene_timer = 0
 while scene_timer < 100 and not pcall(function()
-	scene = sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), sdk.find_type_definition("via.SceneManager"), "get_CurrentScene()")
+	Scene.sceneObject = sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), sdk.find_type_definition("via.SceneManager"), "get_CurrentScene()")
 	scene_timer = nil
 end) do scene_timer = scene_timer + 1 end
 
 
 function Scene.getSceneObject()
-    if Scene.sceneObject ~= nil then
-        return Scene.sceneObject
+    if not Scene.sceneObject then
+        Scene.sceneObject = sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), sdk.find_type_definition("via.SceneManager"), "get_CurrentScene()")
     end
 
-	scene = sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), sdk.find_type_definition("via.SceneManager"), "get_CurrentScene()")
-
-    return scene
+    return Scene.sceneObject
 end
 
 function Scene.getGameMaster()
@@ -25,13 +23,12 @@ function Scene.getGameMaster()
 end
 
 function Scene.getGameManager()
-    if Scene.gameManager ~= nil then
-        return Scene.gameManager
+    if not Scene.gameManager then
+        local gameMaster = Scene.getGameMaster()
+        if gameMaster then
+            Scene.gameManager = gameMaster:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("GameManager")))
+        end
     end
-
-    local gameMaster = Scene.getGameMaster()
-
-    Scene.gameManager = gameMaster:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("GameManager")))
 
     return Scene.gameManager
 end
@@ -48,23 +45,28 @@ function Scene.isTitleScreen()
 end
 
 function Scene.isInGame()
-    return Scene.getGameManager():call("isGamePlayableScene")
+    local gameManager = Scene.getGameManager()
+    return gameManager and gameManager:call("isGamePlayableScene")
 end
 
 function Scene.isInPause()
-    return Scene.getGameManager():call("get_IsPause") and Scene.isInGame()
+    local gameManager = Scene.getGameManager()
+    return gameManager and gameManager:call("get_IsPause") and Scene.isInGame()
 end
 
 function Scene.isGameLoading()
-    return Scene.getGameManager():call("get_IsSceneLoading()")
+    local gameManager = Scene.getGameManager()
+    return gameManager and gameManager:call("get_IsSceneLoading()")
 end
 
 function Scene.isGameOver()
-    return Scene.getGameManager():call("isGameOver")
+    local gameManager = Scene.getGameManager()
+    return gameManager and gameManager:call("isGameOver")
 end
 
 function Scene.goToGameOver()
-    return Scene.getGameManager():call("setGameOverFlag(System.Boolean)", true)
+    local gameManager = Scene.getGameManager()
+    return gameManager and gameManager:call("setGameOverFlag(System.Boolean)", true)
 end
 
 function Scene.isUsingItemBox()
