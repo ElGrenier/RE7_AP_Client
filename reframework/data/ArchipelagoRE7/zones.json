@@ -11,8 +11,12 @@
         "id": 3,
         "name": "Petrole Shipwreck"
     },
-        {
+    {
         "id": 4,
-        "name": "Coin Cages"
+        "name": "Swamp"
+    },
+    {
+        "id": 5,
+        "name": "Salt Mine"
     }
 ]
