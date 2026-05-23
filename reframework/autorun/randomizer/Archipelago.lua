@@ -2,7 +2,7 @@ local Archipelago = {}
 Archipelago.seed = nil
 Archipelago.slot = nil
 Archipelago.death_link = false -- comes over in slot data
-Archipelago.skip_to_chapter_2 = false -- comes over in slot data
+Archipelago.start_at_chapter_2 = false -- comes over in slot data
 Archipelago.hasConnectedPrior = false -- keeps track of whether the player has connected at all so players don't have to remove AP mod to play vanilla
 Archipelago.isInit = false -- keeps track of whether init things like handlers need to run
 Archipelago.waitingForSync = false -- randomizer calls APSync when "waiting for sync"; i.e., when you die
@@ -92,8 +92,8 @@ function Archipelago.SlotDataHandler(slot_data)
         Archipelago.death_link = slot_data.death_link
     end
 
-    if slot_data.skip_to_chapter_2 ~= nil then
-        Archipelago.skip_to_chapter_2 = slot_data.skip_to_chapter_2
+    if slot_data.start_at_chapter_2 ~= nil then
+        Archipelago.start_at_chapter_2 = slot_data.start_at_chapter_2
     end
 
     Lookups.Load(string.lower(slot_data.difficulty))
