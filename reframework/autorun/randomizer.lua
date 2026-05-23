@@ -79,7 +79,7 @@ re.on_pre_application_entry("UpdateBehavior", function()
         
 
 
-        if Archipelago.waitingForSync then
+        if Archipelago.waitingForSync and not Scene.isGameLoading() then
             Archipelago.waitingForSync = false
             Archipelago.Sync()
         end
@@ -115,7 +115,7 @@ re.on_pre_application_entry("UpdateBehavior", function()
             Archipelago:SendDeathLink()
         end
         
-        if not Archipelago.waitingForSync then
+        if not Archipelago.waitingForSync and Player.GetLocalPlayer() ~= nil then -- Ask for a resend after the player has died
             Archipelago.waitingForSync = true
         end
     end
