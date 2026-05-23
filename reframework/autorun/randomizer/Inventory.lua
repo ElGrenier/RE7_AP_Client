@@ -2,7 +2,7 @@ local Inventory = {}
 
 
 function Inventory.GetInventory()
-    return Helpers.component(Player.GetLocalPlayer(), "app.Inventory") or log.debug("Inventory nil !")
+    return Helpers.component(Player.GetLocalPlayer(), "app.Inventory")
 end
 
 
@@ -23,14 +23,35 @@ function Inventory.RemoveItem(itemId)
 end
 
 function Inventory.RemoveMainhandItem()
-    local instance = sdk.get_managed_singleton("app.InteractManager"):get_field("_PlayerStatus"):get_field("EquipManager"):call("equipWeapon(app.WeaponID, app.CharacterDefine.Hand)", 0, 0)
-    log.debug("Trying to remove the Equiped Item")
+    sdk.get_managed_singleton("app.InteractManager"):get_field("_PlayerStatus"):get_field("EquipManager"):call("equipWeapon(app.WeaponID, app.CharacterDefine.Hand)", 0, 0)
 end
 
 
 function Inventory.GetHandRightItem()
     local instance = sdk.get_managed_singleton("app.InteractManager"):get_field("_PlayerStatus"):get_field("EquipManager"):get_field("EquipWeaponIdRight")
     return instance
+end
+
+function Inventory.CleanupHeldWeapons()
+    if Inventory.GetHandRightItem() == nil then
+        return
+    end
+
+    if Inventory.removed_gun == false and Inventory.GetHandRightItem() == 7 then
+        Inventory.RemoveMainhandItem()
+        Inventory.removed_gun = true
+    end
+
+    if Inventory.GetHandRightItem() == 16 and Inventory.removed_grenade_launcher == false then
+        Inventory.removed_grenade_launcher = true
+        Inventory.RemoveMainhandItem()
+    end
+
+    if Inventory.cinematic_removed_gun == false and Helpers.Round(Player.GetCurrentPosition().y) == 1.48 then
+        Inventory.RemoveMainhandItem()
+        Inventory.RemoveItem("Handgun_G17")
+        Inventory.cinematic_removed_gun = true
+    end
 end
 
 -- function Inventory.AddItemtoInventory()

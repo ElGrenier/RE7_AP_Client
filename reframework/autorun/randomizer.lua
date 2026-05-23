@@ -4,10 +4,6 @@ if game_name ~= "re7" then
     return
 end
 
-
-log.debug("[Randomizer] Loading mod...")
-
-
 -- START globals
 AP_REF = require("AP_REF/core")
 
@@ -25,7 +21,6 @@ ItemBox = require("randomizer/ItemBox")
 Items = require("randomizer/Items")
 Player = require("randomizer/Player")
 Scene = require("randomizer/Scene")
-StartingWeapon = require("randomizer/StartingWeapon")
 Storage = require("randomizer/Storage")
 Typewriters = require("randomizer/Typewriters")
 Tools = require("randomizer/Tools")
@@ -33,22 +28,16 @@ Tools = require("randomizer/Tools")
 
 Lookups.Load("normal")
 
-
--- For debugging / trying out functionality:
--- Player.GetInventorySlots()
--- ItemBox.GetItems()
-
--- Door gimmicks (like Door_2_1_003_gimmick) have a GimmickDoor comp
---   that has references to "MyRooms" and "MyLocations", and something about "IsPairComplete"
-
-
 re.on_pre_application_entry("UpdateBehavior", function()
     if Scene:isInGame() then 
         Archipelago.Init()
         Items.Init()
         DestroyObjects.Init()
-        StartingWeapon.Init()
         Logging.Init()
+
+        if Archipelago.skip_to_chapter_2 == True and Scene.getCurrentChapter() == 4 then
+            Scene.getGameManager():call("chapterJumpRequest(System.String, System.Boolean, System.String)", "Chapter3_Start", false, "")
+        end
 
         -- If the game is saving (detected by "get_NowSaving()"), update the storage to the last received items
         local isSaving = Helpers.old_component(Scene.getGameMaster(), "SaveDataManager"):call("get_NowSaving()")
@@ -56,28 +45,7 @@ re.on_pre_application_entry("UpdateBehavior", function()
             Storage.UpdateLastSavedItems()
         end
 
-        -- To remove log spam if the game can't find the player inventory
-        if Inventory.GetHandRightItem() ~= nil then
-            if Inventory.removed_gun == false and Inventory.GetHandRightItem() == 7 then
-                Inventory.RemoveMainhandItem()
-                Inventory.removed_gun = true
-            end
-            if Inventory.GetHandRightItem() == 16 and Inventory.removed_grenade_launcher == false then
-                Inventory.removed_grenade_launcher = true
-                Inventory.RemoveMainhandItem()
-                log.debug("Tried removing Grenade Launcher")
-            end
-        end
-
-        if Inventory.cinematic_removed_gun == false and Helpers.Round(Player.GetCurrentPosition().y) == 1.48 then
-            Inventory.RemoveMainhandItem()
-            Inventory.RemoveItem("Handgun_G17")
-            Inventory.cinematic_removed_gun = true
-            log.debug("Tried removing Handgun AFTER cinematic")
-        end
-
-        
-
+        Inventory.CleanupHeldWeapons()
 
         if Archipelago.waitingForSync and not Scene.isGameLoading() then
             Archipelago.waitingForSync = false
@@ -88,14 +56,6 @@ re.on_pre_application_entry("UpdateBehavior", function()
             Archipelago.ProcessItemsQueue()
         end
 
-        -- if the game randomly forgets that the player exists and tries to leave the invincibility flag on from item pickup,
-        --   relentlessly check for the player existing until it does, then turn that flag off
-        if Archipelago.waitingForInvincibiltyOff then
-            if Player.TurnOffInvincibility() then
-                Archipelago.waitingForInvincibiltyOff = false
-            end
-        end
-        
         if not Scene:isGameOver() then
             if Player.waitingForKill then
                 Player.Kill()
@@ -123,11 +83,6 @@ re.on_pre_application_entry("UpdateBehavior", function()
 end)
 
 re.on_frame(function ()
-    -- ... one day OpieOP
-    -- if Scene:isTitleScreen() then
-    --     GUI.ShowRandomizerLogo()
-    -- end
-
     if reframework:is_drawing_ui() then
         Tools.ShowGUI()
     end
@@ -136,7 +91,7 @@ re.on_frame(function ()
         GUI.CheckForAndDisplayMessages()
     end
 
-    if Scene:isInGame() then 
+    if Scene:isInGame() then
         -- only show the typewriter window when the user presses the reframework hotkey
         if reframework:is_drawing_ui() then
             Typewriters.DisplayWarpMenu()
@@ -144,8 +99,5 @@ re.on_frame(function ()
     end
 end)
 
-re.on_draw_ui(function () -- this is only called when Script Generated UI is visible
-    -- nothing, but could add some debug stuff here one day
+re.on_draw_ui(function ()
 end)
-
-log.debug("[Randomizer] Mod loaded.")

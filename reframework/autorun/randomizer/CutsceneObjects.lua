@@ -25,16 +25,6 @@ function CutsceneObjects.Init()
         end
     end
 
--- -- If the Shadow puzzle has been interacted, and that it can't find it anymore, then it consider it being correctly finished (and progress the scenarioState)
---     if Storage.scenarioState == 6 then
---         local shadow_gimm = Helpers.gameObject("sm9091_ShadowPuzzle02A_Gimmick")
---         local shadow_interactObj = Helpers.transform(shadow_gimm):call("find", "Interact_sm9091_ShadowPuzzle02A"):call("get_GameObject")
---         local shadow_interactBase = Helpers.old_component(shadow_interactObj, "InteractObjectBase")
---         if shadow_interactBase == nil then
---             Storage.scenarioState = 7
---         end
---     end
-
     local door_gimm = Helpers.gameObject("InteractDoor_ItemOpenF")
     if door_gimm then
         if Storage.scenarioState <= 6 then
@@ -98,6 +88,37 @@ function CutsceneObjects.Init()
     end
 end
 
+function CutsceneObjects.UpdateScenarioState(item_name, item_folder_path, item_parent_name)
+    if item_name == "InteractWeapon"
+        and item_folder_path == "Chapter/Chapter3/ItemSet_c03/MainHouse_West/Common/KeyItem"
+        and item_parent_name == "wp1210_Handgun_Get" then
+        Storage.scenarioState = 4
+        return true
+    end
+
+    if item_name == "InteractDetailSearch"
+        and item_folder_path == "Chapter/Chapter3/c03_MainHouse/c03_MainHouse2F/c03_MainHouse2FBath/c03_MainHouse2FBath_sm"
+        and item_parent_name == "sm9092_ShadowPiece02_DetailSearchItem" then
+        Storage.scenarioState = 5
+        return true
+    end
+
+    if item_name == "Interact_sm9091_ShadowPuzzle02A"
+        and item_folder_path == "Chapter/Chapter3/c03_MainHouse/c03_MainHouseHall/c03_MainHouseHall_sm"
+        and item_parent_name == "" then
+        Storage.scenarioState = 9
+        return true
+    end
+
+    if item_name == "InteractDetailSearch"
+        and item_folder_path == "Chapter/Chapter3/c03_TaxidermyRoom/c03_TaxidermyRoomB1F/c03_RightAreaB1FMorgue/c03_RightAreaB1FMorgue_sm"
+        and item_parent_name == "sm2050_workroomkey01A_Get" then
+        Storage.scenarioState = 9
+        return true
+    end
+
+    return false
+end
 
 -- -------------------------------------------------
 -- Storage.scenarioState is for the scenario state
@@ -119,29 +140,5 @@ end
 
 
 
-
--- CutsceneObjects.isInit = false
--- CutsceneObjects.lastStop = os.time()
-
--- function CutsceneObjects.Init()
---     if Archipelago.IsConnected() and not CutsceneObjects.isInit then
---         CutsceneObjects.isInit = true
---         CutsceneObjects.DispersalCartridge()
---     end
-
---     -- if the last check for cutscene objects was X time ago or more, trigger another removal
---     if os.time() - CutsceneObjects.lastStop > 15 then -- 15 seconds
---         CutsceneObjects.isInit = false
---     end
--- end
-
--- function CutsceneObjects.DispersalCartridge()
---     local dispersalObject = Helpers.gameObject("sm42_222_SprayingMachine01A_control")
---     if not dispersalObject then
---         return
---     end
---     local dispersalComponent = Helpers.component(dispersalObject, "gimmick.option.AddItemToInventorySettings")
---     dispersalComponent:set_field("Enable", false)
--- end
 
 return CutsceneObjects

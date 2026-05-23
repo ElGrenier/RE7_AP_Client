@@ -1,8 +1,8 @@
 local Archipelago = {}
 Archipelago.seed = nil
 Archipelago.slot = nil
-Archipelago.starting_weapon = nil -- comes over in slot data
 Archipelago.death_link = false -- comes over in slot data
+Archipelago.skip_to_chapter_2 = false -- comes over in slot data
 Archipelago.hasConnectedPrior = false -- keeps track of whether the player has connected at all so players don't have to remove AP mod to play vanilla
 Archipelago.isInit = false -- keeps track of whether init things like handlers need to run
 Archipelago.waitingForSync = false -- randomizer calls APSync when "waiting for sync"; i.e., when you die
@@ -92,6 +92,10 @@ function Archipelago.SlotDataHandler(slot_data)
         Archipelago.death_link = slot_data.death_link
     end
 
+    if slot_data.skip_to_chapter_2 ~= nil then
+        Archipelago.skip_to_chapter_2 = slot_data.skip_to_chapter_2
+    end
+
     Lookups.Load(string.lower(slot_data.difficulty))
     Storage.Load()
 
@@ -129,11 +133,6 @@ function Archipelago.ItemsReceivedHandler(items_received)
     -- add all of the randomized items to an item queue to wait for send
     if Archipelago.CanReceiveItems() then
         for k, row in pairs(items_received) do
-            -- Logging.Log("Item Received Handler :")
-            -- Logging.Log("Item Received with index")
-            -- Logging.Log(row["index"])
-            -- Logging.Log("Last index saved :")
-            -- Logging.Log(Storage.lastSavedItemIndex)
             -- if the index of the incoming item is greater than the index of our last item at save, check to see if it's randomized
             -- because ONLY non-randomized items escape the queue; everything else gets queued
             if row["index"] ~= nil and (not Storage.lastSavedItemIndex or row["index"] > Storage.lastSavedItemIndex) then
@@ -154,7 +153,6 @@ function Archipelago.ItemsReceivedHandler(items_received)
                 end
 
                 if item_data["name"] and row["player"] ~= nil and is_randomized == 0 then
-                    -- Logging.Log("ReceiveItemStarted")
                     Archipelago.ReceiveItem(item_data["name"], row["player"], is_randomized)
                 else
                     table.insert(Archipelago.itemsQueue, row)
@@ -188,18 +186,11 @@ function Archipelago.ProcessItemsQueue()
     Archipelago.itemsQueue = {}
 
     for k, row in pairs(items) do
-        -- Logging.Log("ProcessItemsQueue :")
-        -- Logging.Log("Item Received with index")
-        -- Logging.Log(row["index"])
-        -- Logging.Log("Last index saved :")
-        -- Logging.Log(Storage.lastSavedItemIndex)
-
         -- if the index of the incoming item is greater than the index of our last item at save, accept it
         if row["index"] ~= nil and (not Storage.lastSavedItemIndex or row["index"] > Storage.lastSavedItemIndex) then
             local item_data = Archipelago._GetItemFromItemsData({ id = row["item"] })
             local location_data = nil
             local is_randomized = 1
-
 
             if row["location"] ~= nil and row["location"] > 0 then
                 location_data = Archipelago._GetLocationFromLocationData({ id = row["location"] })
@@ -212,7 +203,6 @@ function Archipelago.ProcessItemsQueue()
                     end
                 end
             end
-
 
             if item_data["name"] and row["player"] ~= nil then
                 Archipelago.ReceiveItem(item_data["name"], row["player"], is_randomized)
@@ -457,7 +447,6 @@ function Archipelago.SendDeathLink() --Process Deathlink (obviously)
 end
 
 function Archipelago.ReceiveItem(item_name, sender, is_randomized) -- Process receiving items (by checking the game_id in the items.json file)
-    -- Logging.Log("Reception item : ".. tostring(item_name))
     local item_ref = nil
     local item_number = nil
     local item_ammo = nil
@@ -480,9 +469,6 @@ function Archipelago.ReceiveItem(item_name, sender, is_randomized) -- Process re
 
             break
         end
-    end
-    if not item_ref then
-    -- Logging.Log("Item inconnu dans Lookups.items : " .. tostring(item_name))
     end
 
     if item_ref and item_number then
@@ -530,8 +516,6 @@ function Archipelago._GetItemFromItemsData(item_data) -- translate from item nam
     local translated_item = {}
     
     translated_item['name'] = AP_REF.APClient:get_item_name(item_data['id'], player['game'])
-    log.debug("Translated Item (GETITEMFROMITEMSDATA)")
-    log.debug(tostring(translated_item['name']))
     if not translated_item['name'] then
         return nil
     end
@@ -594,13 +578,11 @@ function Archipelago._GetLocationFromLocationData(location_data, include_sent_lo
                loc['folder_path'] == location_data['folder_path'] then
 
                 if loc['parent_object'] == location_data['parent_object'] and loc['item_position'] == nil then
-                    log.debug("If Done")
                     translated_location['name'] = loc['region'] .. " - " .. loc['name']
                     translated_location['raw_data'] = loc
                     break
 
                 elseif Helpers.TablesEqual(loc['item_position'], location_data['item_position']) and loc['parent_object'] == nil then
-                    log.debug("Elseif Done")
                     translated_location['name'] = loc['region'] .. " - " .. loc['name']
                     translated_location['raw_data'] = loc
                     break
@@ -608,8 +590,6 @@ function Archipelago._GetLocationFromLocationData(location_data, include_sent_lo
             end
         end
     end
-    -- Logging.Log("translated location name")
-    -- Logging.Log(tostring(translated_location['name']))
     if translated_location['name'] ~= nil then
         translated_location['id'] = AP_REF.APClient:get_location_id(translated_location['name'], player['game'])
     end
@@ -620,7 +600,6 @@ end
 function Archipelago.Reset()
     Archipelago.seed = nil
     Archipelago.slot = nil
-    Archipelago.starting_weapon = nil
     Archipelago.death_link = false
     Archipelago.itemsQueue = {}
 end

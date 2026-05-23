@@ -13,29 +13,6 @@ end
 
 
 
--- local interactType = sdk.find_type_definition(sdk.game_namespace("InteractObjectBase"))
-
--- if interactType then
---     local interact_method = interactType:get_method("FsmExecute")
-
---     sdk.hook(interact_method, function(args)
---         local compFeedbackFSM = sdk.to_managed_object(args[2])
---         local parentOfComponent = sdk.to_managed_object(compFeedbackFSM:call("get_GameObject"))
-
---         Inspect.Log() -- intentional line break
---         Inspect.Log("Item Object", InspectItem.GetName(parentOfComponent))
---         Inspect.Log("Parent Object", InspectItem.GetParentName(parentOfComponent))
---         Inspect.Log("Folder Path", InspectItem.GetFolderPath(parentOfComponent))
---         Inspect.Log("Player Position", InspectPlayer.GetPositionString())
-
---         if InspectTypewriter.IsTypewriter(parentOfComponent) then
---             Inspect.Log("Recorder Location ID", InspectTypewriter.GetLocationId(parentOfComponent))
---             Inspect.Log("Recorder Map ID", InspectTypewriter.GetMapId(parentOfComponent))
---         end
---     end)
--- end
-
-
 -- List of "hardcoded" item test (to remove them from inventory, and skip to chapter 2) (and fix scenario_qurick)
 
 local skip_chap_2_item_name = "InteractSendFsm"
@@ -57,19 +34,6 @@ local grenade_launcher_item_name = "InteractWeapon"
 local grenade_launcher_parent_name = "wp1110_PortableCannon_Get"
 local grenade_launcher_folder_path = "Chapter/Chapter3/ItemSet_c03/MainHouse_East/Normal/KeyItem"
 
-local scenario_bath_item_name = "InteractDetailSearch"
-local scenario_bath_parent_name = "sm9092_ShadowPiece02_DetailSearchItem"
-local scenario_bath_folder_path = "Chapter/Chapter3/c03_MainHouse/c03_MainHouse2F/c03_MainHouse2FBath/c03_MainHouse2FBath_sm"
-
-local scenario_shadow_puzzle_item_name = "Interact_sm9091_ShadowPuzzle02A"
-local scenario_shadow_puzzle_parent_name = ""
-local scenario_shadow_puzzle_folder_path = "Chapter/Chapter3/c03_MainHouse/c03_MainHouseHall/c03_MainHouseHall_sm"
-
-local scenario_dissection_key_item_name = "InteractDetailSearch"
-local scenario_dissection_key_parent_name = "sm2050_workroomkey01A_Get"
-local scenario_dissection_key_folder_path = "Chapter/Chapter3/c03_TaxidermyRoom/c03_TaxidermyRoomB1F/c03_RightAreaB1FMorgue/c03_RightAreaB1FMorgue_sm"
-
-
 function Items.SetupInteractHook()
     local interactManager = sdk.find_type_definition(sdk.game_namespace("InteractManager"))
     local interactType = sdk.find_type_definition(sdk.game_namespace("InteractObjectBase"))
@@ -88,16 +52,6 @@ function Items.SetupInteractHook()
         posy = Helpers.Round(pos.y)
         posz = Helpers.Round(pos.z)
         item_position_path = { posx, posy, posz }
-
-        log.debug(posx)
-        log.debug(posy)
-        log.debug(posz)
-
-
-
-        -- Logging.Log(item_name)
-        -- Logging.Log(tostring(item_folder))
-        -- Logging.Log("Item Position", "[" .. tostring(table.concat(item_position_path, ",")) .. "]")
 
         item_folder_path = nil
         item_parent_name = nil
@@ -130,8 +84,6 @@ function Items.SetupInteractHook()
 
         -- nothing to do with AP if not connected
         if not Archipelago.IsConnected() then
-            log.debug("Archipelago is not connected.")
-
             if Archipelago.hasConnectedPrior then
                 GUI.AddText("Archipelago is not connected.")
                 Items.cancelNextUI = true
@@ -148,45 +100,33 @@ function Items.SetupInteractHook()
             location_to_check['folder_path'] = item_folder_path
             location_to_check['item_position'] = item_position_path or ""
 
-            -- If we're interacting with the victory location, send victory and bail
-            -- if Archipelago.CheckForVictoryLocation(location_to_check) then
-            --     Archipelago.SendLocationCheck(location_to_check)
-            --     GUI.AddText("Goal Completed!")
+            If we're interacting with the victory location, send victory and bail
+            if Archipelago.CheckForVictoryLocation(location_to_check) then
+                Archipelago.SendLocationCheck(location_to_check)
+                GUI.AddText("Goal Completed!")
 
-            --     return
-            -- end
+                return
+            end
 
             -- Special item condition here
-            if item_name == skip_chap_2_item_name and item_folder_path == skip_chap_2_folder_path then
-                log.debug("DEBUG : Trying Skipping to Chap 2")
-                Scene.getGameManager():call("chapterJumpRequest(System.String, System.Boolean, System.String)", "Chapter3_Start", false, "")
 
             -- elseif item_name == knife_item_name and item_folder_path == knife_folder_path and item_parent_name == knife_parent_name then
-            --     log.debug("DEBUG : Trying to remove knife from Inventory")
             --     Inventory.RemoveItem("Knife")
-            
-            elseif item_name == g17_item_name and item_folder_path == g17_folder_path and item_parent_name == g17_parent_name then
-                log.debug("DEBUG : Trying to remove the G17 from Inventory")
+        
+            if item_name == g17_item_name and item_folder_path == g17_folder_path and item_parent_name == g17_parent_name then
                 Inventory.RemoveItem("Handgun_G17")
                 Inventory.removed_gun = false
 
             elseif item_name == snd_g17_item_name and item_folder_path == snd_g17_folder_path and item_parent_name == snd_g17_parent_name then
-                log.debug("DEBUG : Trying to remove the snd G17 from Inventory")
                 Inventory.cinematic_removed_gun = false
-                Storage.scenarioState = 4
 
             elseif item_name == grenade_launcher_item_name and item_folder_path == grenade_launcher_folder_path and item_parent_name == grenade_launcher_parent_name then
-                log.debug("DEBUG : Trying to remove the Grenade Launcher from Inventory")
                 Inventory.RemoveItem("GrenadeLauncher")
                 Inventory.removed_grenade_launcher = false
-            elseif item_name == scenario_bath_item_name and item_folder_path == scenario_bath_folder_path and item_parent_name == scenario_bath_parent_name then
-                Storage.scenarioState = 5
-            elseif item_name == scenario_shadow_puzzle_item_name and item_folder_path == scenario_shadow_puzzle_folder_path and item_parent_name == scenario_shadow_puzzle_parent_name then
-                Storage.scenarioState = 7
-            elseif item_name == scenario_dissection_key_item_name and item_folder_path == scenario_dissection_key_folder_path and item_parent_name == scenario_dissection_key_parent_name then
-                Storage.scenarioState = 8
-
             end
+
+            CutsceneObjects.UpdateScenarioState(item_name, item_folder_path, item_parent_name)
+
             local isLocationRandomized = Archipelago.IsLocationRandomized(location_to_check)
 
             if Archipelago.IsItemLocation(location_to_check) and (Archipelago.SendLocationCheck(location_to_check) or Archipelago.IsConnected()) then
@@ -218,132 +158,6 @@ end
     --         compGuiMaster:closeInventoryForce()
     --     end
     -- end)
--- end
-
--- Is this even needed by anything in RE7?
--- -------------------------
--- function Items.SetupStatueUIHook()
-    -- local gimmickStatueBehavior = sdk.find_type_definition(sdk.game_namespace("gimmick.action.GimmickDialLockBehavior"))
-    -- local safeLateUpdateMethod = gimmickStatueBehavior:get_method("lateUpdate")
-
-    -- -- checks to see if a safe gui close was requested and, if so, close it
-    -- sdk.hook(safeLateUpdateMethod, function (args)
-    --     if Items.cancelNextStatueUI then
-    --         local compFromHook = sdk.to_managed_object(args[2])
-    --         local statueObject = compFromHook:call('get_GameObject()') -- the dial gimmick
-    --         local compGimmickGUI = statueObject:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("gui.RopewayGimmickAttachmentGUI")))
-    --         local compGimmickAttach = statueObject:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("gimmick.action.GimmickAttachment")))
-    --         local dialControlObject = compGimmickAttach:get_field("_GimmickControl"):get_GameObject()
-
-    --         if not dialControlObject then
-    --             return
-    --         end
-
-    --         -- for some reason, *some* of the statues will throw an error despite properly marking off as they should
-    --         --   i think it's related to the game having two statue controls on some of them (why?!), but don't care enough to dig into more.
-    --         --   so just pcall that f**ker and ignore the error, since it works anyways
-    --         pcall(function () 
-    --             local compAddItems = dialControlObject:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("gimmick.option.AddItemsToInventorySettings")))
-    --             local compDialSettings = dialControlObject:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("gimmick.option.AttachmentAlphabetLockSettings")))
-    --             local settingList = compAddItems:get_field("SettingList")
-    --             local itemPosObject = settingList[0]:get_field("ItemPositions")
-    --             local itemPositions = itemPosObject:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("item.ItemPositions")))
-    --             local statueName = statueObject:call("get_Name()")
-    --             local lastInteractableName = ""
-                
-    --             if Items.lastInteractable then 
-    --                 lastInteractableName = Items.lastInteractable:call("get_Name()")
-    --             end
-
-    --             if string.gsub(tostring(lastInteractableName), '_control', '_gimmick') ~= statueName then
-    --                 return
-    --             end
-
-    --             compFromHook:call("setFinished()")
-
-    --             if compFromHook:get_field("_CurState") > 1 then
-    --                 Items.cancelNextStatueUI = false
-    --                 Items.lastInteractable = nil
-    --                 itemPositions:vanishItemAndSave()
-    --                 itemPosObject:call("set_Enabled", false)
-                    
-    --                 compAddItems:set_field("SettingList", nil)
-    --                 compAddItems:call("set_Enabled", false)
-    --                 compDialSettings:call("TransmitCorrectAnswer", compGimmickGUI)
-    --                 compGimmickGUI:call("SetSatisfy()")
-    --                 compFromHook:call("set_Enabled", false)
-    --             end            
-    --         end)
-    --     end
-    -- end)
--- end
-
--- Is this even needed by anything in RE7?
--- -------------------------
--- function Items.SetupSafeUIHook()
-    -- local gimmickSafeBoxBehavior = sdk.find_type_definition(sdk.game_namespace("gui.GimmickSafeBoxDialBehavior"))
-    -- local safeLateUpdateMethod = gimmickSafeBoxBehavior:get_method("CheckInput")
-
-    -- -- checks to see if a safe gui close was requested and, if so, close it
-    -- sdk.hook(safeLateUpdateMethod, function (args)
-    --     if Items.cancelNextSafeUI then
-    --         local compFromHook = sdk.to_managed_object(args[2])
-    --         local safeBoxObject = compFromHook:call('get_GameObject()') -- the dial gimmick
-    --         local compGimmickGUI = safeBoxObject:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("gui.RopewayGimmickAttachmentGUI")))
-    --         local compGimmickBody = safeBoxObject:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("gimmick.action.GimmickBody")))
-    --         local compFsmState = safeBoxObject:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("FsmStateController")))
-    --         local safeBoxControlObject = compGimmickBody:get_field("_GimmickControl"):call("get_GameObject()")
-    --         local safeBoxControlParent = safeBoxControlObject:get_Transform():get_Parent():get_GameObject()
-    --         local compInteractBehavior = safeBoxControlObject:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("gimmick.action.InteractBehavior")))
-    --         local compDialSettings = safeBoxControlObject:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("gimmick.option.AttachmentSafeBoxDialSettings")))
-    --         local compAddItem = safeBoxControlParent:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("gimmick.option.AddItemToInventorySettings")))
-    --         local itemPosObject = compAddItem:get_field("ItemPositions")
-    --         local itemPositions = itemPosObject:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("item.ItemPositions")))
-
-    --         Items.cancelNextSafeUI = false
-    --         itemPositions:vanishItemAndSave()
-    --         compGimmickGUI:call("SetSatisfy()")
-    --         compAddItem:set_field("Enable", false) -- I guess set_Enabled is only for gameobjects and not components? smh
-    --         compDialSettings:call("TransmitCorrectAnswer", compGimmickGUI)
-    --     end
-    -- end)
--- end
-
--- this was a test to swap items to a different visual item. might not work anymore.
--- function Items.SwapAllItemsTo(item_name)
---     scene = sdk.call_native_func(sdk.get_native_singleton("via.SceneManager"), sdk.find_type_definition("via.SceneManager"), "get_CurrentScene()")
---     item_objects = scene:call("findGameObjectsWithTag(System.String)", "Item")
-
---     for k, item in pairs(item_objects:get_elements()) do
---         item_name = item:call("get_Name()")
---         item_folder = item:call("get_Folder()")
---         item_folder_path = item_folder:call("get_Path()")
---         item_component = item:call("getComponent(System.Type)", sdk.typeof(sdk.game_namespace("item.ItemPositions")))
-
---         if item_component then
---             item_id = item_component:get_field("InitializeItemId")
-
---             if item_id then -- all item_numbers are hex to decimal, use decimal here
---                 if new_item_name == "spray" then
---                     item_number = 1
---                     item_count = 1
---                 elseif new_item_name == "handgun ammo" then
---                     item_number = 15
---                     item_count = 30
---                 elseif new_item_name == "wood crate" then
---                     item_number = 294
---                     item_count = 1
---                 elseif new_item_name == "picture block" then
---                     item_number = 98
---                     item_count = 1
---                 end
-
---                 item_component:set_field("InitializeItemId", item_number)
---                 item_component:set_field("InitializeCount", item_count)
---                 item_component:call("createInitializeItem()")
---             end
---         end
---     end
 -- end
 
 return Items

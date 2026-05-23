@@ -49,6 +49,10 @@ function Scene.isInGame()
     return gameManager and gameManager:call("isGamePlayableScene")
 end
 
+function Scene.getCurrentChapter()
+    return Scene.getGameManager():call("get_CurrentChapter()")
+end
+
 function Scene.isInPause()
     local gameManager = Scene.getGameManager()
     return gameManager and gameManager:call("get_IsPause") and Scene.isInGame()
