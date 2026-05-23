@@ -351,7 +351,7 @@ function Archipelago.BouncedHandler(json_rows) -- Used to process Deathlink
                         })
                     end
                     Archipelago.wasDeathLinked = true
-                    Player.Kill() --Somehow don't work ???
+                    Player.Kill()
                 end
                 break
             end

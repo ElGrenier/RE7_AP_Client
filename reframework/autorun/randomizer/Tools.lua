@@ -48,7 +48,7 @@ function Tools.ShowGUI()
             Storage.lastSavedItemIndex = -1
             Archipelago.waitingForSync = true
         end
-        imgui.text_colored("The anti-softlock features bugged?", -10825765)
+        imgui.text_colored("You can't progress ?", -10825765)
         imgui.text("If you can't continue the scenario")
         imgui.text("because you can't interact with the next scenario step,")
         imgui.text("click this button.")
