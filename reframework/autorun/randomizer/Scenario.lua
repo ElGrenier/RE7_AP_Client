@@ -1,9 +1,9 @@
-local CutsceneObjects = {}
+local Scenario = {}
 
 
-function CutsceneObjects.Init()
+function Scenario.Init()
     if Storage.scenarioState == nil then
-        return CutsceneObjects
+        return Scenario
     end
 
     local shadowPuzzle = Helpers.gameObject("sm9091_ShadowPuzzle02A_Gimmick")
@@ -88,7 +88,7 @@ function CutsceneObjects.Init()
     end
 end
 
-function CutsceneObjects.UpdateScenarioState(item_name, item_folder_path, item_parent_name)
+function Scenario.UpdateScenarioState(item_name, item_folder_path, item_parent_name)
     if item_name == "InteractWeapon"
         and item_folder_path == "Chapter/Chapter3/ItemSet_c03/MainHouse_West/Common/KeyItem"
         and item_parent_name == "wp1210_Handgun_Get" then
@@ -141,4 +141,4 @@ end
 
 
 
-return CutsceneObjects
+return Scenario

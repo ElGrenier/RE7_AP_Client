@@ -12,7 +12,7 @@ Lookups = require("randomizer/Lookups")
 
 Logging = require("randomizer/Logging")
 Archipelago = require("randomizer/Archipelago")
-CutsceneObjects = require("randomizer/CutsceneObjects")
+Scenario = require("randomizer/Scenario")
 DestroyObjects = require("randomizer/DestroyObjects")
 GUI = require("randomizer/GUI")
 Helpers = require("randomizer/Helpers")
@@ -35,7 +35,7 @@ re.on_pre_application_entry("UpdateBehavior", function()
         DestroyObjects.Init()
         Logging.Init()
 
-        if Archipelago.start_at_chapter_2 == True and Scene.getCurrentChapter() == 4 then
+        if Archipelago.start_at_chapter_2 == True and Scene.getCurrentChapter() == 4 and not Scene.isGameLoading() then
             Scene.getGameManager():call("chapterJumpRequest(System.String, System.Boolean, System.String)", "Chapter3_Start", false, "")
         end
 
@@ -79,7 +79,7 @@ re.on_pre_application_entry("UpdateBehavior", function()
             Archipelago.waitingForSync = true
         end
     end
-    CutsceneObjects.Init()
+    Scenario.Init()
 end)
 
 re.on_frame(function ()

@@ -125,7 +125,7 @@ function Items.SetupInteractHook()
                 Inventory.removed_grenade_launcher = false
             end
 
-            CutsceneObjects.UpdateScenarioState(item_name, item_folder_path, item_parent_name)
+            Scenario.UpdateScenarioState(item_name, item_folder_path, item_parent_name)
 
             local isLocationRandomized = Archipelago.IsLocationRandomized(location_to_check)
 
