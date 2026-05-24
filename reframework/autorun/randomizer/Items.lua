@@ -100,7 +100,7 @@ function Items.SetupInteractHook()
             location_to_check['folder_path'] = item_folder_path
             location_to_check['item_position'] = item_position_path or ""
 
-            If we're interacting with the victory location, send victory and bail
+            -- If we're interacting with the victory location, send victory and bail
             if Archipelago.CheckForVictoryLocation(location_to_check) then
                 Archipelago.SendLocationCheck(location_to_check)
                 GUI.AddText("Goal Completed!")
