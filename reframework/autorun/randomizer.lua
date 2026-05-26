@@ -35,7 +35,7 @@ re.on_pre_application_entry("UpdateBehavior", function()
         DestroyObjects.Init()
         Logging.Init()
 
-        if Archipelago.start_at_chapter_2 == True and Scene.getCurrentChapter() == 4 and not Scene.isGameLoading() then
+        if Archipelago.start_at_chapter_2 == "True" and Scene.getCurrentChapter() == 4 and not Scene.isGameLoading() then
             Scene.getGameManager():call("chapterJumpRequest(System.String, System.Boolean, System.String)", "Chapter3_Start", false, "")
         end
 
