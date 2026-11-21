@@ -11,7 +11,7 @@ function Storage.Load()
 
         Storage.swappedStartingWeapon = existing_file['swapped_starting_weapon'] or false
 
-        Storage.scenarioState = existing_file['scenario_state']
+        -- Storage.scenarioState = existing_file['scenario_state']
 
         for k, typewriter in pairs(unlocked_typewriters) do
             Typewriters.Unlock("", typewriter)
@@ -36,7 +36,7 @@ function Storage.Update()
         last_saved = Storage.lastSavedItemIndex,
         swapped_starting_weapon = Storage.swappedStartingWeapon,
         unlocked_typewriters = Typewriters.GetAllUnlocked(),
-        scenario_state = Storage.scenarioState
+        -- scenario_state = Storage.scenarioState
     }
 
     json.dump_file(Storage.GetFilePath(), stored_values)
@@ -59,7 +59,7 @@ function Storage.Reset()
     Storage.lastReceivedItemIndex = -1
     Storage.lastSavedItemIndex = -1
     Storage.swappedStartingWeapon = false
-    Storage.scenarioState = 0
+    -- Storage.scenarioState = 0
 end
 
 Storage.Reset()
