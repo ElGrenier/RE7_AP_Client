@@ -12,7 +12,7 @@ Lookups = require("randomizer/Lookups")
 
 Logging = require("randomizer/Logging")
 Archipelago = require("randomizer/Archipelago")
-Scenario = require("randomizer/Scenario")
+--Scenario = require("randomizer/Scenario")
 DestroyObjects = require("randomizer/DestroyObjects")
 GUI = require("randomizer/GUI")
 Helpers = require("randomizer/Helpers")
