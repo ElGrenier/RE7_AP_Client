@@ -55,7 +55,7 @@ function Scenario.Init()
         end
     end
 
-    if Storage.scenarioState >= 8 then
+    if Storage.scenarioState >= 7 then
         local gimm = Helpers.gameObject("sm2011_TripleCrest01C_InteractSendFsm")
         if gimm then
             local interactButtonBase = Helpers.old_component(gimm, "InteractSendFsm")
@@ -65,28 +65,28 @@ function Scenario.Init()
         end
     end
 
-    if Storage.scenarioState <= 8 then
-        -- Desactivate door interaction
-        local door = Helpers.gameObject("InteractDoor_ItemOpenF")
-        if door then
-            local door_dog_interactButtonBase = Helpers.old_component(door, "InteractDoor")
-            if door_dog_interactButtonBase then
-                door_dog_interactButtonBase:set_field("IsEnable", false)
-            end
-        end
-    end
+--    if Storage.scenarioState <= 8 then
+--        -- Desactivate door interaction
+--        local door = Helpers.gameObject("InteractDoor_ItemOpenF")
+--        if door then
+--            local door_dog_interactButtonBase = Helpers.old_component(door, "InteractDoor")
+--            if door_dog_interactButtonBase then
+--                door_dog_interactButtonBase:set_field("IsEnable", false)
+--            end
+--        end
+--    end
 
-    if Storage.scenarioState >= 9 then
-        -- Desactivate door interaction
-        local door = Helpers.gameObject("InteractDoor_ItemOpen")
-        if door then
-            local door_dog_interactButtonBase = Helpers.old_component(door, "InteractDoor")
-            if door_dog_interactButtonBase then
-                door_dog_interactButtonBase:set_field("IsEnable", false)
-            end
-        end
-    end
-end
+--    if Storage.scenarioState >= 9 then
+--        -- Desactivate door interaction
+--        local door = Helpers.gameObject("InteractDoor_ItemOpen")
+--        if door then
+--            local door_dog_interactButtonBase = Helpers.old_component(door, "InteractDoor")
+--            if door_dog_interactButtonBase then
+--                door_dog_interactButtonBase:set_field("IsEnable", false)
+--            end
+--        end
+--    end
+--end
 
 function Scenario.UpdateScenarioState(item_name, item_folder_path, item_parent_name)
     if item_name == "InteractWeapon"
