@@ -471,7 +471,8 @@
         },
         "item_object": "InteractDetailSearch",
         "parent_object": "sm9092_ShadowPiece02_DetailSearchItem",
-        "folder_path": "Chapter/Chapter3/c03_MainHouse/c03_MainHouse2F/c03_MainHouse2FBath/c03_MainHouse2FBath_sm"
+        "folder_path": "Chapter/Chapter3/c03_MainHouse/c03_MainHouse2F/c03_MainHouse2FBath/c03_MainHouse2FBath_sm",
+		"randomized":0
     },
     {
         "name":"Under the planks",
@@ -798,7 +799,8 @@
         "condition": {},
         "item_object": "sm2011_TripleCrest01C_InteractSendFsm",
         "parent_object": "sm2011_TripleCrest01C_DetailSearchItem",
-        "folder_path": "Chapter/Chapter3/c03_TaxidermyRoom/c03_TaxidermyRoomB1F/c03_RightAreaB1FFreezer/c03_RightAreaB1FFreezer_sm"
+        "folder_path": "Chapter/Chapter3/c03_TaxidermyRoom/c03_TaxidermyRoomB1F/c03_RightAreaB1FFreezer/c03_RightAreaB1FFreezer_sm",
+		"randomized":0
     },
     {
         "name":"In the corpse",
@@ -1102,7 +1104,8 @@
         "condition": {},
         "item_object": "InteractDetailSearch",
         "parent_object": "sm9069_ShadowPiece01_Get",
-        "folder_path": "Chapter/Chapter3/ItemSet_c03/OldHouse/Common/KeyItem"
+        "folder_path": "Chapter/Chapter3/ItemSet_c03/OldHouse/Common/KeyItem",
+		"randomized":0
     },
     {
         "name":"In the locked drawer, next to the sink",
@@ -1330,7 +1333,7 @@
         },
         "item_object": "InteractDetailSearch",
         "folder_path": "Chapter/Chapter3/ItemSet_c03/OldHouse/Normal/Item/Chemical",
-        "item_position": [1,-4,87]
+        "item_position": [1.0,-4.0,87.0]
     },
     {
         "name":"Outside, in front of the cabanon, in the faucet",
@@ -1352,7 +1355,8 @@
         },
         "item_object": "InteractDetailSearch",
         "parent_object": "sm0389_TalismanDoorKey01A_KeyGet",
-        "folder_path": "Chapter/Chapter3/ItemSet_c03/OldHouse/Common/KeyItem"
+        "folder_path": "Chapter/Chapter3/ItemSet_c03/OldHouse/Common/KeyItem",
+		"randomized":0
     },
     {
         "name":"Outside, in the cabanon, on the toilet",
@@ -1691,7 +1695,8 @@
         "condition": {},
         "item_object": "sm1787_DiamondDoorKey01A_InteractDetailSearch",
         "parent_object": "sm1787_DiamondDoorKey01A_DetailSearchItem",
-        "folder_path": "Chapter/Chapter3/c03_TaxidermyRoom/c03_TaxidermyRoomB1F/c03_RightAreaB1FStoreroom/c03_RightAreaB1FStoreroom_sm"
+        "folder_path": "Chapter/Chapter3/c03_TaxidermyRoom/c03_TaxidermyRoomB1F/c03_RightAreaB1FStoreroom/c03_RightAreaB1FStoreroom_sm",
+		"randomized":0
     },
     {
         "name":"In the Armoir on the left",
@@ -1780,7 +1785,8 @@
         },
         "item_object": "sm2080_CardKey01A_InteractDetailSearch",
         "parent_object": "sm2439_CardKey01B_DetailSearchItem",
-        "folder_path": "Chapter/Chapter3/ItemSet_c03/MainHouse_East/Common/KeyItem"
+        "folder_path": "Chapter/Chapter3/ItemSet_c03/MainHouse_East/Common/KeyItem",
+		"randomized":0
     },
     {
         "name":"In the green storage",
@@ -1901,7 +1907,8 @@
         },
         "item_object": "sm2080_CardKey01A_InteractDetailSearch",
         "parent_object": "sm2080_CardKey01A_DetailSearchItem",
-        "folder_path": "Chapter/Chapter3/ItemSet_c03/MainHouse_West/Common/KeyItem"
+        "folder_path": "Chapter/Chapter3/ItemSet_c03/MainHouse_West/Common/KeyItem",
+		"randomized":0
     },
     {
         "name":"On the end of the corridor",
@@ -2288,7 +2295,7 @@
     },
     {
         "name":"On the desk next to the TV",
-        "original_item": "Old Videotape",
+        "original_item": "Herb",
         "region": "Security",
         "condition": {},
         "item_object": "sm1889_MiaVideotape01A_InteractDetailSearch",
@@ -2383,7 +2390,8 @@
         "condition": {},
         "item_object": "InteractDetailSearch",
         "parent_object":"sm2377_WheelWrench01A_DetailSearchItem",
-        "folder_path": "Chapter/Chapter4/ItemSet_c04/Ship4F/Common/KeyItem"
+        "folder_path": "Chapter/Chapter4/ItemSet_c04/Ship4F/Common/KeyItem",
+		 "randomized":0
     },
     {
         "name":"In the upper side of the locker in the south east corner of the room",
@@ -2656,17 +2664,6 @@
         "item_object": "InteractDetailSearch",
         "parent_object":"wp1011_HandgunBullet_Get",
         "folder_path": "Chapter/Chapter4/c04_Ship/c04_ShipB2/c04_ShipB2Corridor01/c04_ShipB2Corridor01_sm"
-    },
-     {
-        "name":"On the upper section of the shelves in the south east corner of the room",
-        "original_item": "Remote Bomb",
-        "region": "Store Room",
-        "condition": {},
-        "item_object": "x",
-        "parent_object":"x",
-        "folder_path": "x",
-        "item_position":[104.74,8.98,1.62]
-
     },
      {
         "name":"On the lower section of the shelves in the south east corner of the room",
@@ -3017,6 +3014,6 @@
         "item_object": "InteractWeapon",
         "parent_object":"wp1340_ChrisHandgun_Get_Event",
         "folder_path": "Chapter/Chapter4/Event_c04/Event_c04_3/evProps",
-        "victory:":1
+        "victory":1
     }
 ]
